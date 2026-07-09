@@ -8,7 +8,7 @@ const Footer = () => {
           <div>
             <h3 className="font-display text-lg font-semibold text-text">Om Satyam</h3>
             <p className="mt-2 text-sm text-text-secondary">
-              Surgical and dental supplies for clinics and practitioners across Nepal.
+              Surgical and dental supplies for dental clinics and practitioners across Nepal.
             </p>
           </div>
 
@@ -16,7 +16,7 @@ const Footer = () => {
             <h4 className="font-mono text-xs font-semibold uppercase tracking-wide text-text-secondary">
               Contact
             </h4>
-            <p className="mt-2 text-sm text-text">Bharatpur, Nepal</p>
+            <p className="mt-2 text-sm text-text">Bharatpur, Chitwan, Nepal</p>
             <div className="mt-3">
               <WhatsAppButton variant="inline" message="Hi, I have a question about your products." />
             </div>
@@ -26,12 +26,12 @@ const Footer = () => {
             <h4 className="font-mono text-xs font-semibold uppercase tracking-wide text-text-secondary">
               Store hours
             </h4>
-            <p className="mt-2 text-sm text-text">Sun – Fri: 9:00 AM – 6:00 PM</p>
+            <p className="mt-2 text-sm text-text">9:00 AM – 6:00 PM</p>
           </div>
         </div>
 
         <p className="mt-10 border-t border-border pt-6 text-xs text-text-secondary">
-          © {new Date().getFullYear()} Om Satyam Surgical &amp; Dental Supply. All rights reserved.
+          © {new Date().getFullYear()} Om Satyam Dental &amp; Surgical. All rights reserved.
         </p>
       </div>
     </footer>

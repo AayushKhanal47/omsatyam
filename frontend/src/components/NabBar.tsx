@@ -10,7 +10,7 @@ const Navbar = () => {
         <Link to="/" className="font-display text-xl font-semibold tracking-tight text-text">
           Om Satyam
           <span className="ml-2 font-mono text-xs font-normal text-text-secondary">
-           DENTAL &amp; SURGICAL
+            SURGICAL &amp; DENTAL
           </span>
         </Link>
 
