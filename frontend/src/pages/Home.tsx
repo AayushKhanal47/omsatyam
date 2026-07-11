@@ -7,6 +7,7 @@ import HeroCarousel from "@/components/HeroCarousel";
 import CategoryStrip from "@/components/CategoryStrip";
 import BrandsSection from "@/components/BrandsSection";
 import WhyChooseUs from "@/components/WhyChooseUs";
+import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 
 const Home = () => {
   const [searchParams] = useSearchParams();
@@ -48,8 +49,13 @@ const Home = () => {
           </p>
         </div>
 
-        {loading && <p className="text-sm text-text-secondary">Loading products...</p>}
-
+{loading && (
+  <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+    {Array.from({ length: 8 }).map((_, i) => (
+      <ProductCardSkeleton key={i} />
+    ))}
+  </div>
+)}
         {error && (
           <p className="rounded-md bg-danger/10 px-4 py-3 text-sm text-danger">{error}</p>
         )}

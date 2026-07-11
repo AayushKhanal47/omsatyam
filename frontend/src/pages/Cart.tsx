@@ -14,6 +14,18 @@ const Cart = () => {
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+
+const validatePhone = (value: string) => {
+  const cleaned = value.replace(/\s+/g, "");
+  const nepalMobilePattern = /^(\+977)?9[6-9]\d{8}$/;
+  if (!nepalMobilePattern.test(cleaned)) {
+    setPhoneError("Enter a valid 10-digit Nepal mobile number (e.g. 98XXXXXXXX)");
+    return false;
+  }
+  setPhoneError(null);
+  return true;
+};
   const [placed, setPlaced] = useState(false);
 
   const buildWhatsappMessage = () => {
@@ -25,10 +37,15 @@ const Cart = () => {
 
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(buildWhatsappMessage())}`;
 
-  const handleCheckout = async (e: FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+ const handleCheckout = async (e: FormEvent) => {
+  e.preventDefault();
+  setError(null);
+
+  if (!validatePhone(phone)) {
+    return;
+  }
+
+  setLoading(true);
     try {
       await createOrder({
         customerName,
@@ -157,12 +174,17 @@ const Cart = () => {
           <div>
             <label className="mb-1.5 block text-sm font-medium text-text">Phone number</label>
             <input
-              required
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary"
-            />
+  required
+  type="tel"
+  value={phone}
+  onChange={(e) => {
+    setPhone(e.target.value);
+    if (phoneError) validatePhone(e.target.value);
+  }}
+  onBlur={(e) => validatePhone(e.target.value)}
+  className={`w-full rounded-md border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary ${phoneError ? "border-danger" : "border-border"}`}
+/>
+{phoneError && <p className="mt-1 text-xs text-danger">{phoneError}</p>}
           </div>
 
           <div>

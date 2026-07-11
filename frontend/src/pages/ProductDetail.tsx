@@ -55,12 +55,20 @@ const ProductDetail = () => {
   )}`;
 
   if (loading) {
-    return (
-      <p className="mx-auto max-w-6xl px-6 py-16 text-sm text-text-secondary">
-        Loading...
-      </p>
-    );
-  }
+  return (
+    <div className="mx-auto max-w-6xl px-6 py-10">
+      <div className="grid gap-10 lg:grid-cols-2">
+        <div className="aspect-square animate-pulse rounded-lg bg-border" />
+        <div className="flex flex-col gap-3">
+          <div className="h-4 w-1/4 animate-pulse rounded bg-border" />
+          <div className="h-8 w-3/4 animate-pulse rounded bg-border" />
+          <div className="h-6 w-1/3 animate-pulse rounded bg-border" />
+          <div className="h-20 w-full animate-pulse rounded bg-border" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
   if (error || !product) {
     return (
