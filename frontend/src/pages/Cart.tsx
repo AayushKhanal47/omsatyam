@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { useCartStore } from "@/store/cartStore";
 import { createOrder } from "@/api/orders";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "9779800000000";
 
@@ -15,6 +16,10 @@ const Cart = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
+  usePageTitle("Cart", "Review your cart and checkout.");
+usePageTitle("About us", "Learn about Om Satyam Dental & Surgical Supply.");
+usePageTitle("Contact", "Get in touch with Om Satyam Dental & Surgical Supply.");
+  
 
 const validatePhone = (value: string) => {
   const cleaned = value.replace(/\s+/g, "");

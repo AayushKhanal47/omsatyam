@@ -4,6 +4,7 @@ import { getProductBySlug } from "@/api/products";
 import type { Product } from "@/types";
 import { useCartStore } from "@/store/cartStore";
 import { useToastStore } from "@/store/toastStore";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const WHATSAPP_NUMBER =
   import.meta.env.VITE_WHATSAPP_NUMBER || "9779800000000";
@@ -19,6 +20,8 @@ const ProductDetail = () => {
 
   const addItem = useCartStore((state) => state.addItem);
   const showToast = useToastStore((state) => state.show);
+  usePageTitle(product?.name || "Product", product?.description);
+  
 
   useEffect(() => {
     if (!slug) return;

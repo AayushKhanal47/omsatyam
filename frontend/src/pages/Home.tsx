@@ -8,6 +8,7 @@ import CategoryStrip from "@/components/CategoryStrip";
 import BrandsSection from "@/components/BrandsSection";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import ProductCardSkeleton from "@/components/ProductCardSkeleton";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const Home = () => {
   const [searchParams] = useSearchParams();
@@ -17,6 +18,7 @@ const Home = () => {
 
   const search = searchParams.get("search") || undefined;
   const category = searchParams.get("category") || undefined;
+  usePageTitle("Home", "Genuine dental and surgical supplies for clinics across Nepal.");
 
   useEffect(() => {
     const fetchProducts = async () => {
