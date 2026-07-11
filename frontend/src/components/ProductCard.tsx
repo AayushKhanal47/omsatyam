@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 import type { Product } from "@/types";
 import { useCartStore } from "@/store/cartStore";
+import { useToastStore } from "@/store/toastStore";
 
 interface ProductCardProps {
   product: Product;
@@ -15,6 +16,7 @@ const isNew = (createdAt?: string) => {
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const addItem = useCartStore((state) => state.addItem);
+  const showToast = useToastStore((state) => state.show);
 
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-surface transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
@@ -49,6 +51,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             onClick={(e) => {
               e.preventDefault();
               addItem(product);
+              showToast(product.name + " added to cart");
             }}
             className="absolute inset-x-3 bottom-3 flex translate-y-12 items-center justify-center gap-2 rounded-full bg-white/95 py-2.5 text-sm font-medium text-text opacity-0 shadow-md transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
           >

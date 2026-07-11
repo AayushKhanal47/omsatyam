@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { getProductBySlug } from "@/api/products";
 import type { Product } from "@/types";
 import { useCartStore } from "@/store/cartStore";
+import { useToastStore } from "@/store/toastStore";
 
 const WHATSAPP_NUMBER =
   import.meta.env.VITE_WHATSAPP_NUMBER || "9779800000000";
@@ -17,6 +18,7 @@ const ProductDetail = () => {
   const [added, setAdded] = useState(false);
 
   const addItem = useCartStore((state) => state.addItem);
+  const showToast = useToastStore((state) => state.show);
 
   useEffect(() => {
     if (!slug) return;
@@ -34,6 +36,7 @@ const ProductDetail = () => {
     if (!product) return;
 
     addItem(product, quantity);
+    showToast(product.name + " added to cart");
     setAdded(true);
 
     setTimeout(() => {
