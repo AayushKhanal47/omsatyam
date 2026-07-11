@@ -49,7 +49,7 @@ const Cart = () => {
   if (placed) {
     return (
       <div className="mx-auto max-w-lg animate-scale-in px-6 py-24 text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-success/10 text-2xl text-success">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-whatsapp/10 text-2xl text-success">
           ✓
         </div>
         <h1 className="font-display text-xl font-semibold text-text">Order placed</h1>
@@ -132,7 +132,7 @@ const Cart = () => {
   href={whatsappUrl}
   target="_blank"
   rel="noopener noreferrer"
-  className="inline-flex items-center justify-center gap-2 rounded-md bg-success py-2.5 text-sm font-medium text-white transition-colors hover:opacity-90"
+  className="inline-flex items-center justify-center gap-2 rounded-md bg-whatsapp py-2.5 text-sm font-medium text-white transition-colors hover:opacity-90"
 >
   Order via WhatsApp instead
 </a>
@@ -191,7 +191,7 @@ const Cart = () => {
           <button
             type="submit"
             disabled={loading}
-            className="mt-1 rounded-md bg-primary py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:opacity-50"
+            className="mt-1 rounded-md bg-whatsapp py-2.5 text-sm font-medium text-white transition-colors hover:bg-whatsapp-hover disabled:opacity-50"
           >
             {loading ? "Placing order..." : "Place order"}
           </button>

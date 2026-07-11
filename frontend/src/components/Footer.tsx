@@ -1,164 +1,62 @@
-
 import { Link } from "react-router-dom";
-import { Phone, Mail, MapPin, Clock } from "lucide-react";
+import { Share2, AtSign, MessageCircle, Phone, Mail, MapPin } from "lucide-react";
 import Logo from "./Logo";
-import WhatsAppButton from "./WhatsAppButton";
+
+const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "9779843966885";
 
 const Footer = () => {
+  const whatsappUrl = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent("Hi, I have a question about your products.");
+
   return (
-    <footer className="bg-footer text-footer-text">
-      <div className="mx-auto max-w-7xl px-6 py-14">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-          {/* Company */}
+    <footer className="bg-footer">
+      <div className="mx-auto max-w-6xl px-6 py-14">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <Logo className="h-12" />
-
-            <p className="mt-5 text-sm leading-7 text-footer-text/80">
-              Om Satyam Dental &amp; Surgical supplies premium dental,
-              surgical instruments, consumables, equipment and clinic
-              essentials with reliable service across Nepal.
+            <Logo className="h-11" />
+            <p className="mt-4 text-sm leading-relaxed text-white/70">
+              Genuine dental and surgical supplies for clinics and practitioners across Nepal.
             </p>
-
-            <div className="mt-6">
-              <WhatsAppButton
-                variant="inline"
-                message="Hi! I would like to know more about your dental products."
-              />
+            <div className="mt-4 flex gap-3">
+              <a href="#" aria-label="Facebook" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"><Share2 className="h-4 w-4" /></a>
+              <a href="#" aria-label="Instagram" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"><AtSign className="h-4 w-4" /></a>
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"><MessageCircle className="h-4 w-4" /></a>
             </div>
           </div>
 
-          {/* Quick Links */}
           <div>
-            <h3 className="mb-5 text-sm font-semibold uppercase tracking-[0.2em] text-white">
-              Quick Links
-            </h3>
-
-            <ul className="space-y-3">
-              <li>
-                <Link
-                  to="/"
-                  className="text-sm transition hover:text-accent"
-                >
-                  Home
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  to="/"
-                  className="text-sm transition hover:text-accent"
-                >
-                  Shop
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  to="/about"
-                  className="text-sm transition hover:text-accent"
-                >
-                  About Us
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  to="/contact"
-                  className="text-sm transition hover:text-accent"
-                >
-                  Contact
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  to="/cart"
-                  className="text-sm transition hover:text-accent"
-                >
-                  Cart
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h3 className="mb-5 text-sm font-semibold uppercase tracking-[0.2em] text-white">
-              Contact Us
-            </h3>
-
-            <div className="space-y-5">
-              <div className="flex items-start gap-3">
-                <MapPin className="mt-1 h-5 w-5 text-accent" />
-
-                <div className="text-sm text-footer-text/80">
-                  Bharatpur-10
-                  <br />
-                  Chitwan, Nepal
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-accent" />
-
-                <span className="text-sm text-footer-text/80">
-                  +977-98XXXXXXXX
-                </span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-accent" />
-
-                <span className="text-sm text-footer-text/80">
-                  info@omsatyamdental.com
-                </span>
-              </div>
+            <h4 className="font-mono text-xs font-semibold uppercase tracking-wide text-white/50">Categories</h4>
+            <div className="mt-3 flex flex-col gap-2">
+              <Link to="/" className="text-sm text-white/80 hover:text-white">Instruments</Link>
+              <Link to="/" className="text-sm text-white/80 hover:text-white">Consumables</Link>
+              <Link to="/" className="text-sm text-white/80 hover:text-white">Equipment</Link>
+              <Link to="/" className="text-sm text-white/80 hover:text-white">Disposables</Link>
             </div>
           </div>
 
-          {/* Business Hours */}
           <div>
-            <h3 className="mb-5 text-sm font-semibold uppercase tracking-[0.2em] text-white">
-              Store Hours
-            </h3>
-
-            <div className="flex items-start gap-3">
-              <Clock className="mt-1 h-5 w-5 text-accent" />
-
-              <div className="space-y-2 text-sm text-footer-text/80">
-                <p>Sunday – Friday</p>
-                <p>9:00 AM – 6:00 PM</p>
-                <p>Saturday: Closed</p>
-              </div>
+            <h4 className="font-mono text-xs font-semibold uppercase tracking-wide text-white/50">Quick links</h4>
+            <div className="mt-3 flex flex-col gap-2">
+              <Link to="/" className="text-sm text-white/80 hover:text-white">All products</Link>
+              <Link to="/cart" className="text-sm text-white/80 hover:text-white">Cart</Link>
+              <Link to="/about" className="text-sm text-white/80 hover:text-white">About us</Link>
+              <Link to="/contact" className="text-sm text-white/80 hover:text-white">Contact</Link>
             </div>
+          </div>
+
+          <div>
+            <h4 className="font-mono text-xs font-semibold uppercase tracking-wide text-white/50">Contact us</h4>
+            <div className="mt-3 flex flex-col gap-2.5 text-sm text-white/85">
+              <span className="flex items-center gap-2"><Phone className="h-4 w-4 flex-shrink-0" /> +977 9855046299</span>
+              <span className="flex items-center gap-2"><Mail className="h-4 w-4 flex-shrink-0" /> omsatyam299@gmail.com</span>
+              <span className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 flex-shrink-0" /> Bharatpur, Chitwan, Nepal</span>
+            </div>
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-2 rounded-md bg-whatsapp px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-whatsapp-hover"><MessageCircle className="h-4 w-4" />Chat on WhatsApp</a>
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="my-10 border-t border-white/10" />
-
-        {/* Bottom */}
-        <div className="flex flex-col items-center justify-between gap-4 text-sm text-footer-text/60 md:flex-row">
-          <p>
-            © {new Date().getFullYear()} Om Satyam Dental &amp; Surgical. All
-            rights reserved.
-          </p>
-
-          <div className="flex gap-6">
-            <Link
-              to="/privacy"
-              className="transition hover:text-accent"
-            >
-              Privacy Policy
-            </Link>
-
-            <Link
-              to="/terms"
-              className="transition hover:text-accent"
-            >
-              Terms &amp; Conditions
-            </Link>
-          </div>
+        <div className="mt-12 flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
+          <span>© {new Date().getFullYear()} Om Satyam Dental &amp; Surgical. All rights reserved.</span>
+          <span>Delivery: Nepal-wide, same-day available in Bharatpur</span>
         </div>
       </div>
     </footer>
@@ -166,4 +64,3 @@ const Footer = () => {
 };
 
 export default Footer;
-

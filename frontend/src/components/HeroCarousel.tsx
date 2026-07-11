@@ -39,7 +39,7 @@ const HeroCarousel = () => {
     <div className={`relative overflow-hidden ${slide.bg} transition-colors duration-700`}>
       <div className="mx-auto flex max-w-6xl flex-col items-start gap-5 px-6 py-16 sm:py-20">
         <span className="animate-fade-in rounded-full bg-white/10 px-3 py-1 font-mono text-xs uppercase tracking-wide text-white/80">
-          Om Satyam Surgical &amp; Dental Supply
+          Om Satyam Dental &amp; Surgical
         </span>
         <h1 key={index} className="animate-fade-in-up max-w-xl font-display text-3xl font-semibold leading-tight text-white sm:text-4xl">
           {slide.title}

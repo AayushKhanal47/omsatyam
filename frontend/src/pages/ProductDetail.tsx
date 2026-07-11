@@ -66,7 +66,7 @@ const ProductDetail = () => {
 
         <Link
           to="/"
-          className="mt-3 inline-block text-sm font-medium text-primary hover:underline"
+          className="mt-3 inline-block text-sm font-medium text-whatsapp hover:underline"
         >
           Back to products
         </Link>
@@ -78,7 +78,7 @@ const ProductDetail = () => {
     <div className="mx-auto max-w-6xl animate-fade-in-up px-6 py-10">
       <Link
         to="/"
-        className="text-sm text-text-secondary hover:text-primary"
+        className="text-sm text-text-secondary hover:text-whatsapp"
       >
         ← Back to products
       </Link>
@@ -102,7 +102,7 @@ const ProductDetail = () => {
         {/* Product Info */}
         <div className="flex flex-col gap-4">
           <div>
-            <span className="rounded bg-primary/10 px-2 py-0.5 font-mono text-xs font-medium uppercase tracking-wide text-primary">
+            <span className="rounded bg-primary/10 px-2 py-0.5 font-mono text-xs font-medium uppercase tracking-wide text-whatsapp">
               {product.category?.name}
             </span>
 
@@ -130,7 +130,7 @@ const ProductDetail = () => {
 
             <p
               className={`mt-1 text-sm ${
-                product.inStock ? "text-success" : "text-danger"
+                product.inStock ? "text-whatsapp" : "text-danger"
               }`}
             >
               {product.inStock
@@ -204,7 +204,7 @@ const ProductDetail = () => {
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-md border border-success py-2.5 text-sm font-medium text-success transition-colors hover:bg-success/10"
+            className="inline-flex items-center justify-center gap-2 rounded-md border border-whatsapp py-2.5 text-sm font-medium text-whatsapp transition-colors hover:bg-whatsapp/10"
           >
             Ask about this on WhatsApp
           </a>
