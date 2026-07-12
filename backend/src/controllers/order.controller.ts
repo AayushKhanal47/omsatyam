@@ -83,3 +83,26 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+// @route  GET /api/orders/track/:id  (public — customer looks up their own order)
+export const trackOrder = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { phone } = req.query;
+
+    if (!phone) {
+      return res.status(400).json({ success: false, message: "Phone number is required" });
+    }
+
+    const order = await Order.findById(id);
+
+    if (!order || order.phone.replace(/\s+/g, "") !== (phone as string).replace(/\s+/g, "")) {
+      return res.status(404).json({ success: false, message: "Order not found. Check your Order ID and phone number." });
+    }
+
+    return res.status(200).json({ success: true, data: order });
+  } catch (error) {
+    console.error("trackOrder error:", error);
+    return res.status(404).json({ success: false, message: "Order not found. Check your Order ID and phone number." });
+  }
+};

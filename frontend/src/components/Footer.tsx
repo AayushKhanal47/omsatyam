@@ -30,6 +30,7 @@ const Footer = () => {
               <Link to="/" className="text-sm text-white/80 hover:text-white">Consumables</Link>
               <Link to="/" className="text-sm text-white/80 hover:text-white">Equipment</Link>
               <Link to="/" className="text-sm text-white/80 hover:text-white">Disposables</Link>
+              <Link to="/track-order" className="text-sm text-white/80 hover:text-white">Track order</Link>
             </div>
           </div>
 

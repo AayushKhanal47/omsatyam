@@ -110,12 +110,12 @@ const ProductForm = ({ onCreated }: { onCreated: () => void }) => {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-text">Name</label>
+          <label className="mb-1.5 block text-sm font-medium text-text">Name <span className="text-danger">*</span></label>
           <input required value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary" />
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-text">Category</label>
+          <label className="mb-1.5 block text-sm font-medium text-text">Category <span className="text-danger">*</span></label>
           <select required value={category} onChange={(e) => setCategory(e.target.value)} className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary">
             <option value="">Select category</option>
             {categories.map((cat) => (
@@ -126,7 +126,7 @@ const ProductForm = ({ onCreated }: { onCreated: () => void }) => {
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-text">Description</label>
+        <label className="mb-1.5 block text-sm font-medium text-text">Description <span className="text-danger">*</span></label>
         <textarea required rows={3} value={description} onChange={(e) => setDescription(e.target.value)} className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary" />
       </div>
 

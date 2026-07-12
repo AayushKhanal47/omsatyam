@@ -30,3 +30,9 @@ export const updateOrderStatus = async (id: string, status: string) => {
   const { data } = await api.put<ApiResponse<import("@/types").Order>>(`/orders/${id}/status`, { status });
   return data;
 };
+export const trackOrder = async (orderId: string, phone: string) => {
+  const { data } = await api.get<ApiResponse<import("@/types").Order>>(`/orders/track/${orderId}`, {
+    params: { phone },
+  });
+  return data;
+};

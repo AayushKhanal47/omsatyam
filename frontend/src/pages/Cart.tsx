@@ -7,6 +7,8 @@ import { usePageTitle } from "@/hooks/usePageTitle";
 const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "9779800000000";
 
 const Cart = () => {
+  usePageTitle("Cart", "Review your cart and checkout.");
+
   const { items, removeItem, updateQuantity, clearCart, totalPrice } = useCartStore();
 
   const [customerName, setCustomerName] = useState("");
@@ -16,22 +18,19 @@ const Cart = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
-  usePageTitle("Cart", "Review your cart and checkout.");
-usePageTitle("About us", "Learn about Om Satyam Dental & Surgical Supply.");
-usePageTitle("Contact", "Get in touch with Om Satyam Dental & Surgical Supply.");
-  
-
-const validatePhone = (value: string) => {
-  const cleaned = value.replace(/\s+/g, "");
-  const nepalMobilePattern = /^(\+977)?9[6-9]\d{8}$/;
-  if (!nepalMobilePattern.test(cleaned)) {
-    setPhoneError("Enter a valid 10-digit Nepal mobile number (e.g. 98XXXXXXXX)");
-    return false;
-  }
-  setPhoneError(null);
-  return true;
-};
   const [placed, setPlaced] = useState(false);
+  const [placedOrderId, setPlacedOrderId] = useState<string | null>(null);
+
+  const validatePhone = (value: string) => {
+    const cleaned = value.replace(/\s+/g, "");
+    const nepalMobilePattern = /^(\+977)?9[6-9]\d{8}$/;
+    if (!nepalMobilePattern.test(cleaned)) {
+      setPhoneError("Enter a valid 10-digit Nepal mobile number (e.g. 98XXXXXXXX)");
+      return false;
+    }
+    setPhoneError(null);
+    return true;
+  };
 
   const buildWhatsappMessage = () => {
     const lines = items.map(
@@ -42,17 +41,17 @@ const validatePhone = (value: string) => {
 
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(buildWhatsappMessage())}`;
 
- const handleCheckout = async (e: FormEvent) => {
-  e.preventDefault();
-  setError(null);
+  const handleCheckout = async (e: FormEvent) => {
+    e.preventDefault();
+    setError(null);
 
-  if (!validatePhone(phone)) {
-    return;
-  }
+    if (!validatePhone(phone)) {
+      return;
+    }
 
-  setLoading(true);
+    setLoading(true);
     try {
-      await createOrder({
+      const res = await createOrder({
         customerName,
         phone,
         address,
@@ -61,6 +60,7 @@ const validatePhone = (value: string) => {
       });
       clearCart();
       setPlaced(true);
+      setPlacedOrderId(res.data._id);
     } catch (err: any) {
       setError(err?.response?.data?.message || "Could not place order. Please try again.");
     } finally {
@@ -71,16 +71,27 @@ const validatePhone = (value: string) => {
   if (placed) {
     return (
       <div className="mx-auto max-w-lg animate-scale-in px-6 py-24 text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-whatsapp/10 text-2xl text-success">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-2xl text-primary">
           ✓
         </div>
         <h1 className="font-display text-xl font-semibold text-text">Order placed</h1>
         <p className="mt-2 text-sm text-text-secondary">
           We've received your order and will contact you shortly to confirm.
         </p>
-        <Link to="/" className="mt-6 inline-block text-sm font-medium text-primary hover:underline">
-          Continue shopping
-        </Link>
+        {placedOrderId && (
+          <div className="mt-4 rounded-md bg-bg px-4 py-3 text-left">
+            <p className="text-xs text-text-secondary">Your Order ID (save this to track your order):</p>
+            <p className="mt-1 select-all font-mono text-sm font-medium text-text">{placedOrderId}</p>
+          </div>
+        )}
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+          <Link to="/" className="text-sm font-medium text-primary hover:underline">
+            Continue shopping
+          </Link>
+          <Link to="/track-order" className="text-sm font-medium text-primary hover:underline">
+            Track your order
+          </Link>
+        </div>
       </div>
     );
   }
@@ -149,15 +160,14 @@ const validatePhone = (value: string) => {
             </span>
           </div>
 
-          
-         <a
-  href={whatsappUrl}
-  target="_blank"
-  rel="noopener noreferrer"
-  className="inline-flex items-center justify-center gap-2 rounded-md bg-whatsapp py-2.5 text-sm font-medium text-white transition-colors hover:opacity-90"
->
-  Order via WhatsApp instead
-</a>
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-md bg-whatsapp py-2.5 text-sm font-medium text-white transition-colors hover:bg-whatsapp-hover"
+          >
+            Order via WhatsApp instead
+          </a>
         </div>
 
         <form
@@ -167,7 +177,9 @@ const validatePhone = (value: string) => {
           <h2 className="font-display text-lg font-semibold text-text">Checkout details</h2>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-text">Full name</label>
+            <label className="mb-1.5 block text-sm font-medium text-text">
+              Full name <span className="text-danger">*</span>
+            </label>
             <input
               required
               value={customerName}
@@ -177,23 +189,29 @@ const validatePhone = (value: string) => {
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-text">Phone number</label>
+            <label className="mb-1.5 block text-sm font-medium text-text">
+              Phone number <span className="text-danger">*</span>
+            </label>
             <input
-  required
-  type="tel"
-  value={phone}
-  onChange={(e) => {
-    setPhone(e.target.value);
-    if (phoneError) validatePhone(e.target.value);
-  }}
-  onBlur={(e) => validatePhone(e.target.value)}
-  className={`w-full rounded-md border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary ${phoneError ? "border-danger" : "border-border"}`}
-/>
-{phoneError && <p className="mt-1 text-xs text-danger">{phoneError}</p>}
+              required
+              type="tel"
+              value={phone}
+              onChange={(e) => {
+                setPhone(e.target.value);
+                if (phoneError) validatePhone(e.target.value);
+              }}
+              onBlur={(e) => validatePhone(e.target.value)}
+              className={`w-full rounded-md border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary ${
+                phoneError ? "border-danger" : "border-border"
+              }`}
+            />
+            {phoneError && <p className="mt-1 text-xs text-danger">{phoneError}</p>}
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-text">Delivery address</label>
+            <label className="mb-1.5 block text-sm font-medium text-text">
+              Delivery address <span className="text-danger">*</span>
+            </label>
             <textarea
               required
               rows={2}
@@ -218,7 +236,7 @@ const validatePhone = (value: string) => {
           <button
             type="submit"
             disabled={loading}
-            className="mt-1 rounded-md bg-whatsapp py-2.5 text-sm font-medium text-white transition-colors hover:bg-whatsapp-hover disabled:opacity-50"
+            className="mt-1 rounded-md bg-primary py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:opacity-50"
           >
             {loading ? "Placing order..." : "Place order"}
           </button>
