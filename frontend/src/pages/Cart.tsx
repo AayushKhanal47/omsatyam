@@ -20,6 +20,7 @@ const Cart = () => {
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [placed, setPlaced] = useState(false);
   const [placedOrderId, setPlacedOrderId] = useState<string | null>(null);
+  const [clinicName, setClinicName] = useState("");
 
   const validatePhone = (value: string) => {
     const cleaned = value.replace(/\s+/g, "");
@@ -53,6 +54,7 @@ const Cart = () => {
     try {
       const res = await createOrder({
         customerName,
+         clinicName: clinicName || undefined,
         phone,
         address,
         items: items.map((item) => ({ product: item.product._id, quantity: item.quantity })),
@@ -79,10 +81,9 @@ const Cart = () => {
           We've received your order and will contact you shortly to confirm.
         </p>
         {placedOrderId && (
-          <div className="mt-4 rounded-md bg-bg px-4 py-3 text-left">
-            <p className="text-xs text-text-secondary">Your Order ID (save this to track your order):</p>
-            <p className="mt-1 select-all font-mono text-sm font-medium text-text">{placedOrderId}</p>
-          </div>
+          <p className="mt-4 text-sm text-text-secondary">
+  You can check your order status anytime using the phone number you provided.
+</p>
         )}
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link to="/" className="text-sm font-medium text-primary hover:underline">
@@ -187,6 +188,17 @@ const Cart = () => {
               className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary"
             />
           </div>
+          <div>
+  <label className="mb-1.5 block text-sm font-medium text-text">
+    Clinic / practice name <span className="text-text-secondary">(optional)</span>
+  </label>
+  <input
+    value={clinicName}
+    onChange={(e) => setClinicName(e.target.value)}
+    placeholder="e.g. Smile Dental Clinic"
+    className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary"
+  />
+</div>
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-text">

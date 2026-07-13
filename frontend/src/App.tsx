@@ -8,8 +8,8 @@ import AdminLogin from "@/pages/admin/AdminLogin";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
-import NotFound from "@/pages/NotFound";
 import TrackOrder from "@/pages/TrackOrder";
+import NotFound from "@/pages/NotFound";
 
 function App() {
   return (
@@ -20,6 +20,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/product/:slug" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/track-order" element={<TrackOrder />} />
         </Route>
 
         {/* Admin routes — no storefront Layout wrapper */}
@@ -32,10 +35,9 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/about" element={<About />} />
-<Route path="/contact" element={<Contact />} />
-<Route path="*" element={<NotFound />} />
-<Route path="/track-order" element={<TrackOrder />} />
+
+        {/* Catch-all — must always be last */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

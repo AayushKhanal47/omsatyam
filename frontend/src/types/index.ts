@@ -60,6 +60,7 @@ export type OrderStatus = "pending" | "confirmed" | "delivered" | "cancelled";
 export interface Order {
   _id: string;
   customerName: string;
+  clinicName?: string;
   phone: string;
   address: string;
   items: OrderItem[];

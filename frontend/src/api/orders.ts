@@ -8,6 +8,7 @@ export interface OrderItemInput {
 
 export interface CreateOrderInput {
   customerName: string;
+   clinicName?: string;
   phone: string;
   address: string;
   items: OrderItemInput[];
@@ -32,6 +33,12 @@ export const updateOrderStatus = async (id: string, status: string) => {
 };
 export const trackOrder = async (orderId: string, phone: string) => {
   const { data } = await api.get<ApiResponse<import("@/types").Order>>(`/orders/track/${orderId}`, {
+    params: { phone },
+  });
+  return data;
+};
+export const trackOrdersByPhone = async (phone: string) => {
+  const { data } = await api.get<ApiResponse<import("@/types").Order[]>>("/orders/track-by-phone", {
     params: { phone },
   });
   return data;

@@ -65,7 +65,10 @@ const OrderManager = () => {
           <div key={order._id} className="rounded-lg border border-border p-4">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
-                <p className="text-sm font-medium text-text">{order.customerName}</p>
+                <p className="text-sm font-medium text-text">
+  {order.customerName}
+  {order.clinicName && <span className="font-normal text-text-secondary"> · {order.clinicName}</span>}
+</p>
                 <p className="text-xs text-text-secondary">{order.phone} &middot; {order.address}</p>
                 <p className="mt-1 text-xs text-text-secondary">
                   {new Date(order.createdAt).toLocaleString()}
