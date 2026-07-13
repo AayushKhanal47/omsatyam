@@ -11,6 +11,7 @@ export type OrderStatus = "pending" | "confirmed" | "delivered" | "cancelled";
 
 export interface IOrder extends Document {
   customerName: string;
+   clinicName?: string;
   phone: string;
   address: string;
   items: IOrderItem[];
@@ -40,6 +41,10 @@ const orderSchema = new Schema<IOrder>(
     customerName: {
       type: String,
       required: true,
+      trim: true,
+    },
+    clinicName: {
+      type: String,
       trim: true,
     },
     phone: {

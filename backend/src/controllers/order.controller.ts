@@ -11,7 +11,7 @@ export const createOrder = async (req: Request, res: Response) => {
       return res.status(400).json({ success: false, message: parsed.error.issues[0].message });
     }
 
-    const { customerName, phone, address, items, notes } = parsed.data;
+    const { customerName, clinicName, phone, address, items, notes } = parsed.data;
 
     const orderItems = [];
     let totalAmount = 0;
@@ -33,6 +33,7 @@ export const createOrder = async (req: Request, res: Response) => {
 
     const order = await Order.create({
       customerName,
+      clinicName,
       phone,
       address,
       items: orderItems,
@@ -84,7 +85,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
   }
 };
 
-// @route  GET /api/orders/track/:id  (public — customer looks up their own order)
+// @route  GET /api/orders/track/:id  (public — direct lookup by Order ID + phone)
 export const trackOrder = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -104,5 +105,26 @@ export const trackOrder = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("trackOrder error:", error);
     return res.status(404).json({ success: false, message: "Order not found. Check your Order ID and phone number." });
+  }
+};
+
+// @route  GET /api/orders/track-by-phone  (public — lists all orders for a phone number)
+export const trackOrdersByPhone = async (req: Request, res: Response) => {
+  try {
+    const { phone } = req.query;
+
+    if (!phone || (phone as string).trim().length < 7) {
+      return res.status(400).json({ success: false, message: "Enter a valid phone number" });
+    }
+
+    const cleaned = (phone as string).replace(/\s+/g, "");
+    const orders = await Order.find({ phone: cleaned })
+      .sort({ createdAt: -1 })
+      .limit(10);
+
+    return res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error("trackOrdersByPhone error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
