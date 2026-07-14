@@ -57,7 +57,7 @@ const Footer = () => {
 
         <div className="mt-12 flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
           <span>© {new Date().getFullYear()} Om Satyam Dental &amp; Surgical. All rights reserved.</span>
-          <span>Delivery: Nepal-wide, same-day available in Bharatpur</span>
+          <span>Delivery: Nepal-wide, same-day available in Chitwan</span>
         </div>
       </div>
     </footer>
