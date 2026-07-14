@@ -35,8 +35,10 @@ const Navbar = () => {
       <TopBar />
       <header className="border-b border-border bg-navbar">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
-          <Link to="/" className="flex-shrink-0">
-            <Logo className="h-14" />
+          
+          {/* Logo container uses negative vertical margins to accommodate the larger size without shifting Navbar height */}
+          <Link to="/" className="flex-shrink-0 -my-2 sm:-my-3 flex items-center">
+            <Logo className="h-16 lg:h-20" />
           </Link>
 
           <form onSubmit={handleSearch} className="hidden flex-1 max-w-md md:flex">

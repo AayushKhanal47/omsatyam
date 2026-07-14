@@ -12,7 +12,8 @@ const Footer = () => {
       <div className="mx-auto max-w-6xl px-6 py-14">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <Logo className="h-11" />
+            {/* The footer logo is bumped up safely to h-16 without affecting layout */}
+            <Logo className="h-16" />
             <p className="mt-4 text-sm leading-relaxed text-white/70">
               Genuine dental and surgical supplies for clinics and practitioners across Nepal.
             </p>
