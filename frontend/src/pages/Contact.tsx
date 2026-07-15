@@ -18,7 +18,7 @@ const Contact = () => {
         </div>
         <div className="rounded-lg border border-border bg-surface p-5">
           <Phone className="h-5 w-5 text-primary" />
-          <p className="mt-2 text-sm font-medium text-text">Phone</p>
+          <p className="mt-2 text-sm font-medium text-text">Phone.  +977 9855046299</p>
           <p className="text-xs text-text-secondary">Available via WhatsApp</p>
         </div>
       </div>

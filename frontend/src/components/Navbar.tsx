@@ -23,7 +23,7 @@ const Navbar = () => {
 
   const navLinks = [
     { label: "Home", to: "/" },
-    { label: "Shop", to: "/" },
+    { label: "Shop", to: "/#shop" },
     { label: "Brands", to: "/#brands" },
     { label: "About", to: "/about" },
     { label: "Contact", to: "/contact" },

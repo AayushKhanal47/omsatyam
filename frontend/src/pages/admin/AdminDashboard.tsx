@@ -6,6 +6,7 @@ import CategoryManager from "@/components/admin/CategoryManager";
 import ProductForm from "@/components/admin/ProductForm";
 import ProductList from "@/components/admin/ProductList";
 import OrderManager from "@/components/admin/OrderManager";
+import AccountSettings from "@/components/admin/AccountSettings";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -40,10 +41,14 @@ const AdminDashboard = () => {
             <CategoryManager />
             <ProductForm onCreated={() => setRefreshKey((k) => k + 1)} />
           </div>
-         <div className="flex flex-col gap-6">
-  <ProductList refreshKey={refreshKey} />
-  <OrderManager />
-</div>
+          <div className="flex flex-col gap-6">
+            <ProductList refreshKey={refreshKey} />
+            <OrderManager />
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <AccountSettings />
         </div>
       </main>
     </div>

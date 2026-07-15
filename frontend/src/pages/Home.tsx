@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useLocation } from "react-router-dom";
 import { getProducts } from "@/api/products";
 import type { Product } from "@/types";
 import ProductCard from "@/components/ProductCard";
@@ -12,6 +12,7 @@ import { usePageTitle } from "@/hooks/usePageTitle";
 
 const Home = () => {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,12 +37,21 @@ const Home = () => {
     fetchProducts();
   }, [search, category]);
 
+  useEffect(() => {
+    if (location.hash) {
+      const el = document.querySelector(location.hash);
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: "smooth" }), 100);
+      }
+    }
+  }, [location]);
+
   return (
     <div>
       <HeroCarousel />
       <CategoryStrip />
 
-      <div className="mx-auto max-w-6xl px-6 py-10">
+      <div id="shop" className="mx-auto max-w-6xl px-6 py-10">
         <div className="mb-8">
           <h2 className="font-display text-2xl font-semibold text-text sm:text-3xl">
             {search ? `Results for "${search}"` : "All products"}
@@ -51,13 +61,14 @@ const Home = () => {
           </p>
         </div>
 
-{loading && (
-  <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
-    {Array.from({ length: 8 }).map((_, i) => (
-      <ProductCardSkeleton key={i} />
-    ))}
-  </div>
-)}
+        {loading && (
+          <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+          </div>
+        )}
+
         {error && (
           <p className="rounded-md bg-danger/10 px-4 py-3 text-sm text-danger">{error}</p>
         )}
