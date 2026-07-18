@@ -53,11 +53,23 @@ export const createOrder = async (req: Request, res: Response) => {
 
 export const getOrders = async (req: Request, res: Response) => {
   try {
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
+    const limit = Math.min(50, parseInt(req.query.limit as string) || 20);
+    const skip = (page - 1) * limit;
+
     const filter: Record<string, any> = {};
     if (req.query.status) filter.status = req.query.status;
 
-    const orders = await Order.find(filter).sort({ createdAt: -1 });
-    return res.status(200).json({ success: true, data: orders });
+    const [orders, total] = await Promise.all([
+      Order.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
+      Order.countDocuments(filter),
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      data: orders,
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    });
   } catch (error) {
     console.error("getOrders error:", error);
     return res.status(500).json({ success: false, message: "Server error" });
@@ -85,7 +97,6 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
   }
 };
 
-// @route  GET /api/orders/track/:id  (public — direct lookup by Order ID + phone)
 export const trackOrder = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -108,7 +119,6 @@ export const trackOrder = async (req: Request, res: Response) => {
   }
 };
 
-// @route  GET /api/orders/track-by-phone  (public — lists all orders for a phone number)
 export const trackOrdersByPhone = async (req: Request, res: Response) => {
   try {
     const { phone } = req.query;

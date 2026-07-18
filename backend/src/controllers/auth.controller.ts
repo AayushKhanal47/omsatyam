@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { Admin } from "@/models/Admin.model";
 import { generateToken } from "@/utils/generateToken";
-import { registerAdminSchema, loginAdminSchema } from "@/utils/validation";
 import { AuthRequest } from "@/middleware/auth.middleware";
+import { registerAdminSchema, loginAdminSchema, changePasswordSchema, updateProfileSchema } from "@/utils/validation";
 
 export const registerAdmin = async (req: Request, res: Response) => {
   try {
@@ -93,6 +93,59 @@ export const getMe = async (req: AuthRequest, res: Response) => {
     });
   } catch (error) {
     console.error("getMe error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// @route  PUT /api/auth/change-password  (admin only, must be logged in)
+export const changePassword = async (req: AuthRequest, res: Response) => {
+  try {
+    const parsed = changePasswordSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ success: false, message: parsed.error.issues[0].message });
+    }
+
+    const { currentPassword, newPassword } = parsed.data;
+
+    const admin = await Admin.findById(req.admin?.id).select("+password");
+    if (!admin) {
+      return res.status(404).json({ success: false, message: "Admin not found" });
+    }
+
+    const isMatch = await admin.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: "Current password is incorrect" });
+    }
+
+    admin.password = newPassword;
+    await admin.save();
+
+    return res.status(200).json({ success: true, message: "Password updated successfully" });
+  } catch (error) {
+    console.error("changePassword error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// @route  PUT /api/auth/profile  (admin only, must be logged in)
+export const updateProfile = async (req: AuthRequest, res: Response) => {
+  try {
+    const parsed = updateProfileSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ success: false, message: parsed.error.issues[0].message });
+    }
+
+    const admin = await Admin.findByIdAndUpdate(req.admin?.id, parsed.data, { new: true });
+    if (!admin) {
+      return res.status(404).json({ success: false, message: "Admin not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: { id: admin.id, name: admin.name, email: admin.email },
+    });
+  } catch (error) {
+    console.error("updateProfile error:", error);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };

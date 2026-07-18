@@ -75,7 +75,12 @@ export const updateProduct = async (req: Request, res: Response) => {
       return res.status(400).json({ success: false, message: parsed.error.issues[0].message });
     }
 
-    const product = await Product.findByIdAndUpdate(req.params.id, { $set: parsed.data }, { new: true, runValidators: true });
+    const updateData: Record<string, any> = { ...parsed.data };
+    if (typeof updateData.stock === "number") {
+      updateData.inStock = updateData.stock > 0;
+    }
+
+    const product = await Product.findByIdAndUpdate(req.params.id, { $set: updateData }, { new: true, runValidators: true });
     if (!product) {
       return res.status(404).json({ success: false, message: "Product not found" });
     }

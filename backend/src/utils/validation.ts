@@ -51,3 +51,12 @@ export const createOrderSchema = z.object({
   items: z.array(orderItemSchema).min(1, "Order must contain at least one item"),
   notes: z.string().optional(),
 });
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required"),
+  newPassword: z.string().min(8, "New password must be at least 8 characters"),
+});
+
+export const updateProfileSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters").optional(),
+  email: z.string().email("Invalid email address").optional(),
+});
