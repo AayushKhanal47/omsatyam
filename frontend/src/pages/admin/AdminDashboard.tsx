@@ -7,11 +7,13 @@ import ProductForm from "@/components/admin/ProductForm";
 import ProductList from "@/components/admin/ProductList";
 import OrderManager from "@/components/admin/OrderManager";
 import AccountSettings from "@/components/admin/AccountSettings";
+import type { Product } from "@/types";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const { admin } = useAdminAuth();
   const [refreshKey, setRefreshKey] = useState(0);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   const handleLogout = async () => {
     await logoutAdmin();
@@ -39,10 +41,14 @@ const AdminDashboard = () => {
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="flex flex-col gap-6">
             <CategoryManager />
-            <ProductForm onCreated={() => setRefreshKey((k) => k + 1)} />
+            <ProductForm
+              onCreated={() => setRefreshKey((k) => k + 1)}
+              editingProduct={editingProduct}
+              onCancelEdit={() => setEditingProduct(null)}
+            />
           </div>
           <div className="flex flex-col gap-6">
-            <ProductList refreshKey={refreshKey} />
+            <ProductList refreshKey={refreshKey} onEdit={(product) => setEditingProduct(product)} />
             <OrderManager />
           </div>
         </div>

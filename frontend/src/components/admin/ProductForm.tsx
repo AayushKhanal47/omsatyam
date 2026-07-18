@@ -1,16 +1,22 @@
 import { useState, useEffect, type FormEvent, type ChangeEvent } from "react";
 import { X } from "lucide-react";
 import { getCategories } from "@/api/categories";
-import { createProduct } from "@/api/adminProducts";
+import { createProduct, updateProduct } from "@/api/adminProducts";
 import { uploadImageToCloudinary } from "@/api/cloudinary";
-import type { Category } from "@/types";
+import type { Category, Product } from "@/types";
 
 interface SpecRow {
   key: string;
   value: string;
 }
 
-const ProductForm = ({ onCreated }: { onCreated: () => void }) => {
+interface ProductFormProps {
+  onCreated: () => void;
+  editingProduct?: Product | null;
+  onCancelEdit?: () => void;
+}
+
+const ProductForm = ({ onCreated, editingProduct, onCancelEdit }: ProductFormProps) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -28,9 +34,30 @@ const ProductForm = ({ onCreated }: { onCreated: () => void }) => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
+  const isEditing = Boolean(editingProduct);
+
   useEffect(() => {
     getCategories().then((res) => setCategories(res.data));
   }, []);
+
+  useEffect(() => {
+    if (editingProduct) {
+      setName(editingProduct.name);
+      setDescription(editingProduct.description);
+      setCategory(editingProduct.category?._id || "");
+      setPrice(editingProduct.priceOnRequest ? "" : String(editingProduct.price));
+      setPriceOnRequest(editingProduct.priceOnRequest);
+      setStock(String(editingProduct.stock));
+      setBrand(editingProduct.brand || "");
+      setSku(editingProduct.sku || "");
+      setImages(editingProduct.images || []);
+      setSpecs(
+        editingProduct.specifications.length > 0
+          ? editingProduct.specifications
+          : [{ key: "", value: "" }]
+      );
+    }
+  }, [editingProduct]);
 
   const handleImageSelect = async (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -87,7 +114,7 @@ const ProductForm = ({ onCreated }: { onCreated: () => void }) => {
 
     setLoading(true);
     try {
-      await createProduct({
+      const payload = {
         name,
         description,
         category,
@@ -99,21 +126,44 @@ const ProductForm = ({ onCreated }: { onCreated: () => void }) => {
         brand: brand || undefined,
         sku: sku || undefined,
         isFeatured: false,
-      });
+      };
+
+      if (isEditing && editingProduct) {
+        await updateProduct(editingProduct._id, payload);
+      } else {
+        await createProduct(payload);
+      }
+
       resetForm();
       setSuccess(true);
       onCreated();
+      if (isEditing && onCancelEdit) onCancelEdit();
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: any) {
-      setError(err?.response?.data?.message || "Failed to create product");
+      setError(err?.response?.data?.message || `Failed to ${isEditing ? "update" : "create"} product`);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleCancel = () => {
+    resetForm();
+    setError(null);
+    if (onCancelEdit) onCancelEdit();
+  };
+
   return (
     <form onSubmit={handleSubmit} className="animate-fade-in-up flex flex-col gap-4 rounded-lg border border-border bg-surface p-6">
-      <h2 className="font-display text-lg font-semibold text-text">Add product</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="font-display text-lg font-semibold text-text">
+          {isEditing ? "Edit product" : "Add product"}
+        </h2>
+        {isEditing && (
+          <button type="button" onClick={handleCancel} className="text-sm font-medium text-text-secondary hover:text-text">
+            Cancel
+          </button>
+        )}
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
@@ -221,10 +271,14 @@ const ProductForm = ({ onCreated }: { onCreated: () => void }) => {
       </div>
 
       {error && <p className="rounded-md bg-danger/10 px-3.5 py-2.5 text-sm text-danger">{error}</p>}
-      {success && <p className="animate-fade-in rounded-md bg-success/10 px-3.5 py-2.5 text-sm text-success">Product created successfully.</p>}
+      {success && (
+        <p className="animate-fade-in rounded-md bg-success/10 px-3.5 py-2.5 text-sm text-success">
+          Product {isEditing ? "updated" : "created"} successfully.
+        </p>
+      )}
 
       <button type="submit" disabled={loading || uploading} className="mt-2 rounded-md bg-primary py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:opacity-50">
-        {loading ? "Creating..." : "Create product"}
+        {loading ? (isEditing ? "Saving..." : "Creating...") : (isEditing ? "Save changes" : "Create product")}
       </button>
     </form>
   );
