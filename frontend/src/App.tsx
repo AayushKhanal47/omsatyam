@@ -1,21 +1,27 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "@/components/Layout";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import AdminLayout from "@/components/admin/AdminLayout";
 import Home from "@/pages/Home";
 import ProductDetail from "@/pages/ProductDetail";
 import Cart from "@/pages/Cart";
-import AdminLogin from "@/pages/admin/AdminLogin";
-import AdminDashboard from "@/pages/admin/AdminDashboard";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import TrackOrder from "@/pages/TrackOrder";
 import NotFound from "@/pages/NotFound";
+import AdminLogin from "@/pages/admin/AdminLogin";
+import AdminOverview from "@/pages/admin/AdminOverview";
+import AddProduct from "@/pages/admin/AddProduct";
+import ProductsPage from "@/pages/admin/ProductsPage";
+import EditProduct from "@/pages/admin/EditProduct";
+import OrdersPage from "@/pages/admin/OrdersPage";
+import AccountPage from "@/pages/admin/AccountPage";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Storefront routes — wrapped in Layout (Navbar + Footer + WhatsApp button) */}
+        {/* Storefront routes */}
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/product/:slug" element={<ProductDetail />} />
@@ -25,16 +31,23 @@ function App() {
           <Route path="/track-order" element={<TrackOrder />} />
         </Route>
 
-        {/* Admin routes — no storefront Layout wrapper */}
+        {/* Admin */}
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route
           path="/admin/dashboard"
           element={
             <ProtectedRoute>
-              <AdminDashboard />
+              <AdminLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<AdminOverview />} />
+          <Route path="add-product" element={<AddProduct />} />
+          <Route path="products" element={<ProductsPage />} />
+          <Route path="products/:id/edit" element={<EditProduct />} />
+          <Route path="orders" element={<OrdersPage />} />
+          <Route path="account" element={<AccountPage />} />
+        </Route>
 
         {/* Catch-all — must always be last */}
         <Route path="*" element={<NotFound />} />

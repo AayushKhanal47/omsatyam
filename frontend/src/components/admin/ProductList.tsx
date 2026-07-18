@@ -30,7 +30,7 @@ const ProductList = ({ refreshKey, onEdit }: ProductListProps) => {
   };
 
   return (
-    <div className="animate-fade-in-up animate-delay-1 rounded-lg border border-border bg-surface p-6">
+    <div className="rounded-lg border border-border bg-surface p-6">
       <h2 className="font-display text-lg font-semibold text-text">Your products</h2>
 
       {loading && <p className="mt-4 text-sm text-text-secondary">Loading...</p>}
@@ -45,13 +45,18 @@ const ProductList = ({ refreshKey, onEdit }: ProductListProps) => {
             key={product._id}
             className="flex items-center justify-between rounded-md border border-border px-4 py-3"
           >
-            <div>
-              <p className="text-sm font-medium text-text">{product.name}</p>
-              <p className="font-mono text-xs text-text-secondary">
-                {product.category?.name} · {product.priceOnRequest ? "Contact for price" : `Rs. ${product.price}`} · Stock: {product.stock}
-              </p>
+            <div className="flex items-center gap-3">
+              {product.images?.[0] && (
+                <img src={product.images[0]} alt="" className="h-12 w-12 rounded-md object-cover" />
+              )}
+              <div>
+                <p className="text-sm font-medium text-text">{product.name}</p>
+                <p className="font-mono text-xs text-text-secondary">
+                  {product.category?.name} · {product.priceOnRequest ? "Contact for price" : `Rs. ${product.price}`} · Stock: {product.stock}
+                </p>
+              </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-shrink-0 gap-3">
               <button
                 onClick={() => onEdit(product)}
                 className="font-mono text-xs uppercase text-primary hover:underline"

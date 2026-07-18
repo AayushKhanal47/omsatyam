@@ -11,7 +11,7 @@ interface SpecRow {
 }
 
 interface ProductFormProps {
-  onCreated: () => void;
+  onCreated?: () => void;
   editingProduct?: Product | null;
   onCancelEdit?: () => void;
 }
@@ -136,7 +136,7 @@ const ProductForm = ({ onCreated, editingProduct, onCancelEdit }: ProductFormPro
 
       resetForm();
       setSuccess(true);
-      onCreated();
+     onCreated?.();
       if (isEditing && onCancelEdit) onCancelEdit();
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: any) {
