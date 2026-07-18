@@ -12,15 +12,15 @@ const Cart = () => {
   const { items, removeItem, updateQuantity, clearCart, totalPrice } = useCartStore();
 
   const [customerName, setCustomerName] = useState("");
+  const [clinicName, setClinicName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [notes, setNotes] = useState("");
+  const [website, setWebsite] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [placed, setPlaced] = useState(false);
-  const [placedOrderId, setPlacedOrderId] = useState<string | null>(null);
-  const [clinicName, setClinicName] = useState("");
 
   const validatePhone = (value: string) => {
     const cleaned = value.replace(/\s+/g, "");
@@ -52,17 +52,17 @@ const Cart = () => {
 
     setLoading(true);
     try {
-      const res = await createOrder({
+      await createOrder({
         customerName,
-         clinicName: clinicName || undefined,
+        clinicName: clinicName || undefined,
         phone,
         address,
         items: items.map((item) => ({ product: item.product._id, quantity: item.quantity })),
         notes: notes || undefined,
+        website,
       });
       clearCart();
       setPlaced(true);
-      setPlacedOrderId(res.data._id);
     } catch (err: any) {
       setError(err?.response?.data?.message || "Could not place order. Please try again.");
     } finally {
@@ -80,11 +80,9 @@ const Cart = () => {
         <p className="mt-2 text-sm text-text-secondary">
           We've received your order and will contact you shortly to confirm.
         </p>
-        {placedOrderId && (
-          <p className="mt-4 text-sm text-text-secondary">
-  You can check your order status anytime using the phone number you provided.
-</p>
-        )}
+        <p className="mt-4 text-sm text-text-secondary">
+          You can check your order status anytime using the phone number you provided.
+        </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link to="/" className="text-sm font-medium text-primary hover:underline">
             Continue shopping
@@ -177,6 +175,17 @@ const Cart = () => {
         >
           <h2 className="font-display text-lg font-semibold text-text">Checkout details</h2>
 
+          <input
+            type="text"
+            name="website"
+            value={website}
+            onChange={(e) => setWebsite(e.target.value)}
+            className="hidden"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+          />
+
           <div>
             <label className="mb-1.5 block text-sm font-medium text-text">
               Full name <span className="text-danger">*</span>
@@ -188,17 +197,18 @@ const Cart = () => {
               className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary"
             />
           </div>
+
           <div>
-  <label className="mb-1.5 block text-sm font-medium text-text">
-    Clinic / practice name <span className="text-text-secondary">(optional)</span>
-  </label>
-  <input
-    value={clinicName}
-    onChange={(e) => setClinicName(e.target.value)}
-    placeholder="e.g. Smile Dental Clinic"
-    className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary"
-  />
-</div>
+            <label className="mb-1.5 block text-sm font-medium text-text">
+              Clinic / practice name <span className="text-text-secondary">(optional)</span>
+            </label>
+            <input
+              value={clinicName}
+              onChange={(e) => setClinicName(e.target.value)}
+              placeholder="e.g. Smile Dental Clinic"
+              className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary"
+            />
+          </div>
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-text">

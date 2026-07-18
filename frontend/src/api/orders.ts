@@ -9,6 +9,7 @@ export interface OrderItemInput {
 export interface CreateOrderInput {
   customerName: string;
   clinicName?: string;
+  website?: string;
   phone: string;
   address: string;
   items: OrderItemInput[];

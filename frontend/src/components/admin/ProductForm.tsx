@@ -1,4 +1,5 @@
 import { useState, useEffect, type FormEvent, type ChangeEvent } from "react";
+import { X } from "lucide-react";
 import { getCategories } from "@/api/categories";
 import { createProduct } from "@/api/adminProducts";
 import { uploadImageToCloudinary } from "@/api/cloudinary";
@@ -19,7 +20,7 @@ const ProductForm = ({ onCreated }: { onCreated: () => void }) => {
   const [stock, setStock] = useState("0");
   const [brand, setBrand] = useState("");
   const [sku, setSku] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [specs, setSpecs] = useState<SpecRow[]>([{ key: "", value: "" }]);
@@ -32,20 +33,26 @@ const ProductForm = ({ onCreated }: { onCreated: () => void }) => {
   }, []);
 
   const handleImageSelect = async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
     setUploading(true);
     setUploadError(null);
     try {
-      const url = await uploadImageToCloudinary(file);
-      setImageUrl(url);
+      const uploadPromises = Array.from(files).map((file) => uploadImageToCloudinary(file));
+      const urls = await Promise.all(uploadPromises);
+      setImages((prev) => [...prev, ...urls]);
     } catch (err) {
-      setUploadError("Image upload failed. Try again.");
+      setUploadError("One or more images failed to upload. Try again.");
       console.error(err);
     } finally {
       setUploading(false);
+      e.target.value = "";
     }
+  };
+
+  const removeImage = (index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const updateSpec = (index: number, field: "key" | "value", value: string) => {
@@ -64,7 +71,7 @@ const ProductForm = ({ onCreated }: { onCreated: () => void }) => {
     setStock("0");
     setBrand("");
     setSku("");
-    setImageUrl("");
+    setImages([]);
     setSpecs([{ key: "", value: "" }]);
   };
 
@@ -86,7 +93,7 @@ const ProductForm = ({ onCreated }: { onCreated: () => void }) => {
         category,
         price: priceOnRequest ? 0 : Number(price),
         priceOnRequest,
-        images: imageUrl ? [imageUrl] : [],
+        images,
         stock: Number(stock),
         specifications: specs.filter((s) => s.key.trim() && s.value.trim()),
         brand: brand || undefined,
@@ -110,12 +117,16 @@ const ProductForm = ({ onCreated }: { onCreated: () => void }) => {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-text">Name <span className="text-danger">*</span></label>
+          <label className="mb-1.5 block text-sm font-medium text-text">
+            Name <span className="text-danger">*</span>
+          </label>
           <input required value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary" />
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-text">Category <span className="text-danger">*</span></label>
+          <label className="mb-1.5 block text-sm font-medium text-text">
+            Category <span className="text-danger">*</span>
+          </label>
           <select required value={category} onChange={(e) => setCategory(e.target.value)} className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary">
             <option value="">Select category</option>
             {categories.map((cat) => (
@@ -126,7 +137,9 @@ const ProductForm = ({ onCreated }: { onCreated: () => void }) => {
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-text">Description <span className="text-danger">*</span></label>
+        <label className="mb-1.5 block text-sm font-medium text-text">
+          Description <span className="text-danger">*</span>
+        </label>
         <textarea required rows={3} value={description} onChange={(e) => setDescription(e.target.value)} className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary" />
       </div>
 
@@ -157,21 +170,40 @@ const ProductForm = ({ onCreated }: { onCreated: () => void }) => {
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-text">Product image</label>
-        <div className="flex items-center gap-4">
-          {imageUrl ? (
-            <img src={imageUrl} alt="Preview" className="h-20 w-20 rounded-md border border-border object-cover" />
-          ) : (
-            <div className="flex h-20 w-20 items-center justify-center rounded-md border border-dashed border-border text-xs text-text-secondary">
-              No image
-            </div>
-          )}
-          <div className="flex-1">
-            <input type="file" accept="image/*" onChange={handleImageSelect} disabled={uploading} className="block w-full text-sm text-text-secondary file:mr-3 file:rounded-md file:border-0 file:bg-primary file:px-3.5 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-primary-hover" />
-            {uploading && <p className="mt-1 text-xs text-text-secondary">Uploading...</p>}
-            {uploadError && <p className="mt-1 text-xs text-danger">{uploadError}</p>}
+        <label className="mb-1.5 block text-sm font-medium text-text">Product images</label>
+        <p className="mb-2 text-xs text-text-secondary">Add one or more photos. The first one is used as the main thumbnail.</p>
+
+        {images.length > 0 && (
+          <div className="mb-3 flex flex-wrap gap-3">
+            {images.map((url, i) => (
+              <div key={i} className="relative">
+                <img src={url} alt={`Product ${i + 1}`} className="h-20 w-20 rounded-md border border-border object-cover" />
+                {i === 0 && (
+                  <span className="absolute -left-1 -top-1 rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-semibold text-white">Main</span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => removeImage(i)}
+                  className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-danger text-white"
+                  aria-label="Remove image"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
           </div>
-        </div>
+        )}
+
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleImageSelect}
+          disabled={uploading}
+          className="block w-full text-sm text-text-secondary file:mr-3 file:rounded-md file:border-0 file:bg-primary file:px-3.5 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-primary-hover"
+        />
+        {uploading && <p className="mt-1 text-xs text-text-secondary">Uploading...</p>}
+        {uploadError && <p className="mt-1 text-xs text-danger">{uploadError}</p>}
       </div>
 
       <div>
