@@ -62,16 +62,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
       </Link>
 
       <div className="flex flex-1 flex-col gap-1 p-4">
-        <div className="flex items-center justify-between">
-          <span className="font-mono text-[10px] uppercase tracking-wide text-primary">
-            {product.category?.name || "Uncategorized"}
-          </span>
-          {product.brand && (
-            <span className="text-[10px] uppercase tracking-wide text-text-secondary">
-              {product.brand}
-            </span>
-          )}
-        </div>
+        <span className="font-mono text-[10px] uppercase tracking-wide text-primary">
+          {product.category?.name || "Uncategorized"}
+        </span>
 
         <Link to={`/product/${product.slug}`}>
           <h3 className="mt-0.5 font-display text-sm font-semibold leading-snug text-text transition-colors hover:text-primary">
@@ -79,8 +72,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </h3>
         </Link>
 
-        {product.sku && (
-          <span className="font-mono text-[11px] text-text-secondary">#{product.sku}</span>
+        {(product.brand || product.sku) && (
+          <p className="truncate font-mono text-[11px] text-text-secondary">
+            {product.brand}
+            {product.brand && product.sku && " · "}
+            {product.sku && `#${product.sku}`}
+          </p>
         )}
 
         <div className="mt-2 flex items-center justify-between">
@@ -91,7 +88,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
               Rs. {product.price.toLocaleString()}
             </span>
           )}
-          <span className={`h-2 w-2 rounded-full ${product.inStock ? "bg-success" : "bg-danger"}`} />
+          <span className={`h-2 w-2 flex-shrink-0 rounded-full ${product.inStock ? "bg-success" : "bg-danger"}`} />
         </div>
       </div>
     </div>

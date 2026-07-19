@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, useLocation } from "react-router-dom";
+import { useSearchParams, useLocation, useNavigate } from "react-router-dom";
 import { getProducts } from "@/api/products";
 import type { Product } from "@/types";
 import ProductCard from "@/components/ProductCard";
@@ -13,6 +13,7 @@ import { usePageTitle } from "@/hooks/usePageTitle";
 const Home = () => {
   const [searchParams] = useSearchParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +47,8 @@ const Home = () => {
     }
   }, [location]);
 
+  const isFiltered = Boolean(search || category);
+
   return (
     <div>
       <HeroCarousel />
@@ -74,9 +77,21 @@ const Home = () => {
         )}
 
         {!loading && !error && products.length === 0 && (
-          <p className="text-sm text-text-secondary">
-            No products found — try a different search or check back soon.
-          </p>
+          <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed border-border px-6 py-10">
+            <p className="text-sm text-text-secondary">
+              {isFiltered
+                ? "No products matched your search or filter."
+                : "No products yet — check back soon."}
+            </p>
+            {isFiltered && (
+              <button
+                onClick={() => navigate("/")}
+                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
+              >
+                Clear search and browse all products
+              </button>
+            )}
+          </div>
         )}
 
         <div className="grid animate-fade-in-up grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
