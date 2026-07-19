@@ -1,25 +1,15 @@
-import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Search, ShoppingCart, Menu, X } from "lucide-react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { ShoppingCart, Menu, X, Search } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import Logo from "./Logo";
 import TopBar from "./TopBar";
+import SearchBar from "./SearchBar";
 
 const Navbar = () => {
-  const navigate = useNavigate();
   const totalItems = useCartStore((state) => state.totalItems());
-  const [search, setSearch] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
-
-  const handleSearch = (e: FormEvent) => {
-    e.preventDefault();
-    if (search.trim()) {
-      navigate(`/?search=${encodeURIComponent(search.trim())}`);
-      setMobileOpen(false);
-      setMobileSearchOpen(false);
-    }
-  };
 
   const navLinks = [
     { label: "Home", to: "/" },
@@ -27,7 +17,6 @@ const Navbar = () => {
     { label: "Brands", to: "/#brands" },
     { label: "About", to: "/about" },
     { label: "Contact", to: "/contact" },
-    { label: "Track Order", to: "/track-order" },
   ];
 
   return (
@@ -35,23 +24,13 @@ const Navbar = () => {
       <TopBar />
       <header className="border-b border-border bg-navbar">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
-          
-          {/* Logo container uses negative vertical margins to accommodate the larger size without shifting Navbar height */}
-          <Link to="/" className="flex-shrink-0 -my-2 sm:-my-3 flex items-center">
-            <Logo className="h-16 lg:h-20" />
+          <Link to="/" className="flex-shrink-0">
+            <Logo className="h-16" />
           </Link>
 
-          <form onSubmit={handleSearch} className="hidden flex-1 max-w-md md:flex">
-            <div className="relative w-full">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search instruments, brands, consumables..."
-                className="w-full rounded-full border border-border bg-bg py-2.5 pl-9 pr-4 text-sm outline-none transition-colors focus:border-primary"
-              />
-            </div>
-          </form>
+          <div className="hidden flex-1 max-w-md md:block">
+            <SearchBar />
+          </div>
 
           <nav className="hidden items-center gap-6 lg:flex">
             {navLinks.map((link) => (
@@ -95,18 +74,7 @@ const Navbar = () => {
 
         {mobileSearchOpen && (
           <div className="animate-fade-in-up border-t border-border px-6 py-3 md:hidden">
-            <form onSubmit={handleSearch}>
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
-                <input
-                  autoFocus
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search products..."
-                  className="w-full rounded-full border border-border bg-bg py-2.5 pl-9 pr-4 text-sm outline-none focus:border-primary"
-                />
-              </div>
-            </form>
+            <SearchBar onNavigate={() => setMobileSearchOpen(false)} />
           </div>
         )}
 
