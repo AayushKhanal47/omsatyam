@@ -2,24 +2,41 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const slides = [
+interface Slide {
+  title: string;
+  subtitle: string;
+  cta: string;
+  image: string;
+}
+
+const slides: Slide[] = [
   {
-    title: "Precision instruments, trusted by clinics across Nepal",
-    subtitle: "Surgical and dental supplies sourced from certified global brands",
-    cta: "Shop instruments",
-    bg: "bg-primary",
+    title: "Professional Dental Instruments",
+    subtitle:
+      "Premium instruments trusted by dental professionals across Nepal.",
+    cta: "Browse Products",
+    image: "/banners/banner1.jpeg",
   },
   {
-    title: "Genuine consumables, always in stock",
-    subtitle: "Composites, cements, and disposables for daily practice",
-    cta: "Browse consumables",
-    bg: "bg-[#0F4A4E]",
+    title: "Premium Dental Consumables",
+    subtitle:
+      "Composites, cements, endodontic materials and daily clinical essentials.",
+    cta: "Browse Products",
+    image: "/banners/banner2.jpeg",
   },
   {
-    title: "Order on WhatsApp, delivered to your clinic",
-    subtitle: "No account needed — just message us your requirements",
-    cta: "Chat with us",
-    bg: "bg-[#12595E]",
+    title: "Complete Dental Equipment",
+    subtitle:
+      "Everything your clinic needs—from dental chairs to air compressors.",
+    cta: "Browse Products",
+    image: "/banners/banner3.avif",
+  },
+  {
+    title: "Trusted Dental & Surgical Supplies",
+    subtitle:
+      "Discover quality products for clinics, hospitals and dental professionals.",
+    cta: "Browse Products",
+    image: "/banners/banner4.jpeg",
   },
 ];
 
@@ -28,59 +45,102 @@ const HeroCarousel = () => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setIndex((i) => (i + 1) % slides.length);
+      setIndex((prev) => (prev + 1) % slides.length);
     }, 5000);
+
     return () => clearInterval(timer);
   }, []);
 
   const slide = slides[index];
 
   return (
-    <div className={`relative overflow-hidden ${slide.bg} transition-colors duration-700`}>
-      <div className="mx-auto flex max-w-6xl flex-col items-start gap-5 px-6 py-16 sm:py-20">
-        <span className="animate-fade-in rounded-full bg-white/10 px-3 py-1 font-mono text-xs uppercase tracking-wide text-white/80">
-          Om Satyam Dental &amp; Surgical
-        </span>
-        <h1 key={index} className="animate-fade-in-up max-w-xl font-display text-3xl font-semibold leading-tight text-white sm:text-4xl">
-          {slide.title}
-        </h1>
-        <p key={`${index}-sub`} className="animate-fade-in-up animate-delay-1 max-w-md text-sm text-white/80">
-          {slide.subtitle}
-        </p>
-        <Link
-          to="/"
-          className="animate-fade-in-up animate-delay-2 rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-white transition-transform hover:scale-105"
-        >
-          {slide.cta}
-        </Link>
+    <section className="relative h-[430px] overflow-hidden md:h-[520px] lg:h-[620px]">
+      {/* Background Image */}
+      <img
+        key={slide.image}
+        src={slide.image}
+        alt={slide.title}
+        className="absolute inset-0 h-full w-full object-cover transition-all duration-700"
+      />
+
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/10" />
+
+      {/* Content */}
+      <div className="relative z-10 mx-auto flex h-full max-w-7xl items-center px-6">
+        <div className="max-w-xl">
+          <span className="mb-5 inline-block rounded-full bg-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white backdrop-blur-sm">
+            Om Satyam Dental & Surgical
+          </span>
+
+          <h1
+            key={index}
+            className="mb-5 text-4xl font-bold leading-tight text-white md:text-5xl lg:text-6xl"
+          >
+            {slide.title}
+          </h1>
+
+          <p
+            key={`${index}-subtitle`}
+            className="mb-8 max-w-lg text-base leading-7 text-white/90 md:text-lg"
+          >
+            {slide.subtitle}
+          </p>
+
+          <div className="flex flex-wrap gap-4">
+            <Link
+              to="/#shop"
+              className="rounded-lg bg-accent px-6 py-3 font-semibold text-white transition duration-300 hover:scale-105"
+            >
+              {slide.cta}
+            </Link>
+
+            <Link
+              to="/contact"
+              className="rounded-lg border border-white/30 bg-white/10 px-6 py-3 font-semibold text-white backdrop-blur-sm transition duration-300 hover:bg-white/20"
+            >
+              Contact Us
+            </Link>
+          </div>
+        </div>
       </div>
 
+      {/* Previous */}
       <button
-        onClick={() => setIndex((i) => (i - 1 + slides.length) % slides.length)}
-        className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
-        aria-label="Previous slide"
+        onClick={() =>
+          setIndex((prev) => (prev - 1 + slides.length) % slides.length)
+        }
+        className="absolute left-5 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/30 p-3 text-white backdrop-blur-md transition hover:bg-black/50"
+        aria-label="Previous Slide"
       >
-        <ChevronLeft className="h-5 w-5" />
-      </button>
-      <button
-        onClick={() => setIndex((i) => (i + 1) % slides.length)}
-        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
-        aria-label="Next slide"
-      >
-        <ChevronRight className="h-5 w-5" />
+        <ChevronLeft size={24} />
       </button>
 
-      <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
+      {/* Next */}
+      <button
+        onClick={() =>
+          setIndex((prev) => (prev + 1) % slides.length)
+        }
+        className="absolute right-5 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/30 p-3 text-white backdrop-blur-md transition hover:bg-black/50"
+        aria-label="Next Slide"
+      >
+        <ChevronRight size={24} />
+      </button>
+
+      {/* Indicators */}
+      <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 gap-3">
         {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => setIndex(i)}
             aria-label={`Go to slide ${i + 1}`}
-            className={`h-1.5 rounded-full transition-all ${i === index ? "w-6 bg-white" : "w-1.5 bg-white/40"}`}
+            className={`h-2 rounded-full transition-all duration-300 ${
+              i === index ? "w-10 bg-white" : "w-2 bg-white/50"
+            }`}
           />
         ))}
       </div>
-    </div>
+    </section>
   );
 };
 
