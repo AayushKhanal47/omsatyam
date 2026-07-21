@@ -50,6 +50,7 @@ const Footer = () => {
             <div className="mt-3 flex flex-col gap-2.5 text-sm text-white/85">
               <span className="flex items-center gap-2"><Phone className="h-4 w-4 flex-shrink-0" /> +977 9855046299</span>
               <span className="flex items-center gap-2"><Mail className="h-4 w-4 flex-shrink-0" /> omsatyam299@gmail.com</span>
+              <span className="flex items-center gap-2"><Mail className="h-4 w-4 flex-shrink-0" /> aayushkhanal810@gmail.com</span>
               <span className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 flex-shrink-0" /> Bharatpur, Chitwan, Nepal</span>
             </div>
             <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-2 rounded-md bg-whatsapp px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-whatsapp-hover"><MessageCircle className="h-4 w-4" />Chat on WhatsApp</a>
