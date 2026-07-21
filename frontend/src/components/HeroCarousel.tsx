@@ -27,7 +27,7 @@ const slides: Slide[] = [
   {
     title: "Complete Dental Equipment",
     subtitle:
-      "Everything your clinic needs—from dental chairs to air compressors.",
+      "Everything your clinic needs from dental chairs to air compressors.",
     cta: "Browse Products",
     image: "/banners/banner3.avif",
   },
