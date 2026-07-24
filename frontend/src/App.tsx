@@ -16,10 +16,12 @@ import ProductsPage from "@/pages/admin/ProductsPage";
 import EditProduct from "@/pages/admin/EditProduct";
 import OrdersPage from "@/pages/admin/OrdersPage";
 import AccountPage from "@/pages/admin/AccountPage";
+import ScrollToTop from "@/components/ScrollToTop";
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         {/* Storefront routes */}
         <Route element={<Layout />}>

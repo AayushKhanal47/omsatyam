@@ -9,7 +9,7 @@ const About = () => {
         Om Satyam is a dental and surgical supply store based in Bharatpur, Nepal, serving
         clinics and practitioners with genuine instruments, consumables, and equipment sourced
         from certified brands. We're committed to reliability, fair pricing, and making it easy
-        for practitioners across Nepal to get the supplies they need — whether through our
+        for practitioners across Nepal to get the supplies they need whether through our
         online catalog or directly over WhatsApp.
       </p>
     </div>
