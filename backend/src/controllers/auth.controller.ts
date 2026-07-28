@@ -3,6 +3,7 @@ import { Admin } from "@/models/Admin.model";
 import { generateToken } from "@/utils/generateToken";
 import { AuthRequest } from "@/middleware/auth.middleware";
 import { registerAdminSchema, loginAdminSchema, changePasswordSchema, updateProfileSchema } from "@/utils/validation";
+import { getAuthCookieOptions } from "@/utils/authCookie";
 
 export const registerAdmin = async (req: Request, res: Response) => {
   try {
@@ -73,9 +74,7 @@ export const loginAdmin = async (req: Request, res: Response) => {
 
 export const logoutAdmin = async (_req: Request, res: Response) => {
   res.cookie("token", "", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    ...getAuthCookieOptions(),
     expires: new Date(0),
   });
   return res.status(200).json({ success: true, message: "Logged out" });

@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Response } from "express";
+import { getAuthCookieOptions } from "@/utils/authCookie";
 
 export const generateToken = (res: Response, adminId: string): string => {
   const secret = process.env.JWT_SECRET;
@@ -12,9 +13,7 @@ export const generateToken = (res: Response, adminId: string): string => {
   });
 
   res.cookie("token", token, {
-    httpOnly: true, // JS can't read this cookie — protects against XSS token theft
-    secure: process.env.NODE_ENV === "production", // HTTPS only in production
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    ...getAuthCookieOptions(),
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
