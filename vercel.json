@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd backend && npm install --include=dev && npm run build && cd ../frontend && npm install --include=dev && npm run build",
+  "outputDirectory": "frontend/dist",
+  "installCommand": "npm install --include=dev",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
