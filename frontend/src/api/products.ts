@@ -5,6 +5,7 @@ export interface GetProductsParams {
   page?: number;
   limit?: number;
   category?: string;
+  brand?: string;
   search?: string;
   sort?: string;
 }
@@ -21,5 +22,9 @@ export const getProductBySlug = async (slug: string) => {
 
 export const getCategories = async () => {
   const { data } = await api.get<ApiResponse<Category[]>>("/categories");
+  return data;
+};
+export const getBrands = async () => {
+  const { data } = await api.get<ApiResponse<string[]>>("/products/brands");
   return data;
 };

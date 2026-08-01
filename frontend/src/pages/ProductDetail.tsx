@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getProductBySlug } from "@/api/products";
+import { getProductBySlug, getProducts } from "@/api/products";
+import ProductCard from "@/components/ProductCard";
 import type { Product } from "@/types";
 import { useCartStore } from "@/store/cartStore";
 import { useToastStore } from "@/store/toastStore";
@@ -18,18 +19,34 @@ const ProductDetail = () => {
   const addItem = useCartStore((state) => state.addItem);
   const showToast = useToastStore((state) => state.show);
   const [added, setAdded] = useState(false);
+const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
 
   usePageTitle(product?.name || "Product", product?.description);
+useEffect(() => {
+  if (!slug) return;
 
-  useEffect(() => {
-    if (!slug) return;
-    setLoading(true);
-    setActiveImage(0);
-    getProductBySlug(slug)
-      .then((res) => setProduct(res.data))
-      .catch(() => setError("Product not found"))
-      .finally(() => setLoading(false));
-  }, [slug]);
+  setLoading(true);
+  setActiveImage(0);
+
+  getProductBySlug(slug)
+    .then((res) => {
+      setProduct(res.data);
+
+      return getProducts({
+        category: res.data.category?._id,
+        limit: 5,
+      });
+    })
+    .then((res) => {
+      if (res) {
+        setRelatedProducts(
+          res.data.filter((p: Product) => p.slug !== slug).slice(0, 4)
+        );
+      }
+    })
+    .catch(() => setError("Product not found"))
+    .finally(() => setLoading(false));
+}, [slug]);
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -71,7 +88,7 @@ const ProductDetail = () => {
     );
   }
 
-  return (
+    return (
     <div className="mx-auto max-w-6xl animate-fade-in-up px-6 py-10">
       <Link to="/" className="text-sm text-text-secondary hover:text-primary">
         ← Back to products
@@ -81,7 +98,11 @@ const ProductDetail = () => {
         <div>
           <div className="aspect-square overflow-hidden rounded-lg border border-border bg-surface">
             {product.images && product.images.length > 0 ? (
-              <img src={product.images[activeImage]} alt={product.name} className="h-full w-full object-cover" />
+              <img
+                src={product.images[activeImage]}
+                alt={product.name}
+                className="h-full w-full object-cover"
+              />
             ) : (
               <div className="flex h-full w-full items-center justify-center text-text-secondary">
                 No image
@@ -99,7 +120,11 @@ const ProductDetail = () => {
                     i === activeImage ? "border-primary" : "border-border"
                   }`}
                 >
-                  <img src={img} alt={`${product.name} ${i + 1}`} className="h-full w-full object-cover" />
+                  <img
+                    src={img}
+                    alt={`${product.name} ${i + 1}`}
+                    className="h-full w-full object-cover"
+                  />
                 </button>
               ))}
             </div>
@@ -111,39 +136,57 @@ const ProductDetail = () => {
             <span className="rounded bg-primary/10 px-2 py-0.5 font-mono text-xs font-medium uppercase tracking-wide text-primary">
               {product.category?.name}
             </span>
+
             <h1 className="mt-3 font-display text-2xl font-semibold text-text sm:text-3xl">
               {product.name}
             </h1>
+
             {product.sku && (
-              <p className="mt-1 font-mono text-sm text-text-secondary">#{product.sku}</p>
+              <p className="mt-1 font-mono text-sm text-text-secondary">
+                #{product.sku}
+              </p>
             )}
           </div>
 
           <div>
             {product.priceOnRequest ? (
-              <p className="font-mono text-xl font-semibold text-accent">Contact for price</p>
+              <p className="font-mono text-xl font-semibold text-accent">
+                Contact for price
+              </p>
             ) : (
               <p className="font-mono text-2xl font-semibold text-text">
                 Rs. {product.price.toLocaleString()}
               </p>
             )}
-            <p className={`mt-1 text-sm ${product.inStock ? "text-success" : "text-danger"}`}>
+
+            <p
+              className={`mt-1 text-sm ${
+                product.inStock ? "text-success" : "text-danger"
+              }`}
+            >
               {product.inStock ? "In stock" : "Out of stock"}
             </p>
           </div>
 
-          <p className="text-sm leading-relaxed text-text-secondary">{product.description}</p>
+          <p className="text-sm leading-relaxed text-text-secondary">
+            {product.description}
+          </p>
 
           {product.specifications.length > 0 && (
             <div className="rounded-lg border border-border">
               <table className="w-full text-sm">
                 <tbody>
                   {product.specifications.map((spec, i) => (
-                    <tr key={i} className={i !== 0 ? "border-t border-border" : ""}>
+                    <tr
+                      key={i}
+                      className={i !== 0 ? "border-t border-border" : ""}
+                    >
                       <td className="px-4 py-2.5 font-mono text-xs uppercase text-text-secondary">
                         {spec.key}
                       </td>
-                      <td className="px-4 py-2.5 text-text">{spec.value}</td>
+                      <td className="px-4 py-2.5 text-text">
+                        {spec.value}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -160,7 +203,9 @@ const ProductDetail = () => {
                 >
                   −
                 </button>
+
                 <span className="w-10 text-center text-sm">{quantity}</span>
+
                 <button
                   onClick={() => setQuantity((q) => q + 1)}
                   className="px-3 py-2 text-text hover:bg-bg"
@@ -168,6 +213,7 @@ const ProductDetail = () => {
                   +
                 </button>
               </div>
+
               <button
                 onClick={handleAddToCart}
                 className="flex-1 rounded-md bg-primary py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
@@ -187,6 +233,20 @@ const ProductDetail = () => {
           </a>
         </div>
       </div>
+
+      {relatedProducts.length > 0 && (
+        <div className="mt-16">
+          <h2 className="font-display text-xl font-semibold text-text">
+            Related products
+          </h2>
+
+          <div className="mt-6 grid grid-cols-2 gap-5 sm:grid-cols-4">
+            {relatedProducts.map((p) => (
+              <ProductCard key={p._id} product={p} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

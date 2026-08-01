@@ -4,11 +4,14 @@ import { getProducts } from "@/api/products";
 import type { Product } from "@/types";
 import ProductCard from "@/components/ProductCard";
 import HeroCarousel from "@/components/HeroCarousel";
+import TrustBar from "@/components/TrustBar";
 import CategoryStrip from "@/components/CategoryStrip";
 import BrandsSection from "@/components/BrandsSection";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import BrandFilter from "@/components/BrandFilter";
+import NewsletterSignup from "@/components/NewsletterSignup";
 
 const Home = () => {
   const [searchParams] = useSearchParams();
@@ -17,16 +20,23 @@ const Home = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+const search = searchParams.get("search") || undefined;
+const category = searchParams.get("category") || undefined;
+const brand = searchParams.get("brand") || undefined;
 
-  const search = searchParams.get("search") || undefined;
-  const category = searchParams.get("category") || undefined;
   usePageTitle("Home", "Genuine dental and surgical supplies for clinics across Nepal.");
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const res = await getProducts({ page: 1, limit: 20, search, category });
+       const res = await getProducts({
+  page: 1,
+  limit: 20,
+  search,
+  category,
+  brand,
+});
         setProducts(res.data);
       } catch (err) {
         setError("Could not load products. Is the backend server running?");
@@ -36,7 +46,7 @@ const Home = () => {
       }
     };
     fetchProducts();
-  }, [search, category]);
+  }, [search, category, brand]);
 
   useEffect(() => {
     if (location.hash) {
@@ -52,17 +62,21 @@ const Home = () => {
   return (
     <div>
       <HeroCarousel />
+      <TrustBar />
       <CategoryStrip />
+<div id="shop" className="mx-auto max-w-6xl px-6 py-10">
+  <div className="mb-6">
+    <BrandFilter />
+  </div>
 
-      <div id="shop" className="mx-auto max-w-6xl px-6 py-10">
-        <div className="mb-8">
-          <h2 className="font-display text-2xl font-semibold text-text sm:text-3xl">
-            {search ? `Results for "${search}"` : "All products"}
-          </h2>
-          <p className="mt-2 text-sm text-text-secondary">
-            Instruments, consumables, and equipment for clinics and practitioners.
-          </p>
-        </div>
+  <div className="mb-8">
+    <h2 className="font-display text-2xl font-semibold text-text sm:text-3xl">
+      {search ? `Results for "${search}"` : "All products"}
+    </h2>
+    <p className="mt-2 text-sm text-text-secondary">
+      Instruments, consumables, and equipment for clinics and practitioners.
+    </p>
+  </div>
 
         {loading && (
           <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
@@ -101,8 +115,9 @@ const Home = () => {
         </div>
       </div>
 
-      <BrandsSection />
-      <WhyChooseUs />
+  <BrandsSection />
+<NewsletterSignup />
+<WhyChooseUs />
     </div>
   );
 };

@@ -1,14 +1,15 @@
 import { Router } from "express";
 import { createOrder, getOrders, updateOrderStatus, trackOrder, trackOrdersByPhone } from "@/controllers/order.controller";
 import { protect } from "@/middleware/auth.middleware";
-import rateLimit from "express-rate-limit";
+import { mongoRateLimit } from "@/utils/mongoRateLimit";
 
 const router = Router();
 
-const orderLimiter = rateLimit({
+const orderLimiter = mongoRateLimit({
   windowMs: 60 * 60 * 1000,
   max: 10,
-  message: { success: false, message: "Too many orders placed. Please try again later or contact us on WhatsApp." },
+  message: "Too many orders placed. Please try again later or contact us on WhatsApp.",
+  keyPrefix: "order",
 });
 
 router.post("/", orderLimiter, createOrder);

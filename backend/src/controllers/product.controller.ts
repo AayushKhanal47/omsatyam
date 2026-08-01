@@ -9,9 +9,10 @@ export const getProducts = async (req: Request, res: Response) => {
     const limit = Math.min(50, parseInt(req.query.limit as string) || 20);
     const skip = (page - 1) * limit;
 
-    const filter: Record<string, any> = { isActive: true };
-    if (req.query.category) filter.category = req.query.category;
-    if (req.query.search) filter.$text = { $search: req.query.search as string };
+const filter: Record<string, any> = { isActive: true };
+if (req.query.category) filter.category = req.query.category;
+if (req.query.brand) filter.brand = req.query.brand;
+if (req.query.search) filter.$text = { $search: req.query.search as string };
 
     let sortOption: Record<string, 1 | -1> = { createdAt: -1 };
     if (req.query.sort === "price_asc") sortOption = { price: 1 };
@@ -100,6 +101,15 @@ export const deleteProduct = async (req: Request, res: Response) => {
     return res.status(200).json({ success: true, message: "Product removed" });
   } catch (error) {
     console.error("deleteProduct error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+export const getBrands = async (_req: Request, res: Response) => {
+  try {
+    const brands = await Product.distinct("brand", { isActive: true, brand: { $nin: [null, ""] } });
+    return res.status(200).json({ success: true, data: brands.sort() });
+  } catch (error) {
+    console.error("getBrands error:", error);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };

@@ -1,4 +1,4 @@
-    import WhatsAppButton from "@/components/WhatsappButton";
+    import WhatsAppButton from "@/components/WhatsAppButton";
 import { Phone, MapPin, Clock } from "lucide-react";
 
 const Contact = () => {

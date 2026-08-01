@@ -25,13 +25,10 @@ const SearchBar = ({ variant = "light", onNavigate }: SearchBarProps) => {
       setSuggestions([]);
       return;
     }
-
     const thisRequestId = ++requestIdRef.current;
     setLoading(true);
-
     getProducts({ search: debouncedQuery, limit: 5 })
       .then((res) => {
-        // Discard this result if a newer request has since been made
         if (thisRequestId !== requestIdRef.current) return;
         setSuggestions(res.data);
       })
@@ -73,7 +70,7 @@ const SearchBar = ({ variant = "light", onNavigate }: SearchBarProps) => {
       <form onSubmit={handleSubmit}>
         <div className="relative">
           <Search
-            className={`pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 ${
+            className={`pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 ${
               isDark ? "text-white/50" : "text-text-secondary"
             }`}
           />
@@ -85,16 +82,16 @@ const SearchBar = ({ variant = "light", onNavigate }: SearchBarProps) => {
             }}
             onFocus={() => setShowDropdown(true)}
             placeholder="Search instruments, brands, consumables..."
-            className={`w-full rounded-full border py-2.5 pl-9 pr-9 text-sm outline-none transition-colors ${
+            className={`w-full rounded-md border-2 py-2.5 pl-10 pr-9 text-sm outline-none transition-all ${
               isDark
-                ? "border-white/15 bg-white/10 text-white placeholder-white/50 focus:border-white/40"
-                : "border-border bg-bg text-text focus:border-primary"
+                ? "border-white/20 bg-white/10 text-white placeholder-white/50 focus:border-white/50 focus:bg-white/15"
+                : "border-border bg-bg text-text focus:border-primary focus:ring-4 focus:ring-primary/10"
             }`}
           />
           {loading && (
             <Loader2
-              className={`absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin ${
-                isDark ? "text-white/50" : "text-text-secondary"
+              className={`absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin ${
+                isDark ? "text-white/50" : "text-primary"
               }`}
             />
           )}
@@ -102,7 +99,7 @@ const SearchBar = ({ variant = "light", onNavigate }: SearchBarProps) => {
       </form>
 
       {showDropdown && query.trim().length >= 2 && suggestions.length > 0 && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-96 overflow-y-auto rounded-lg border border-border bg-surface shadow-lg animate-fade-in">
+        <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-96 overflow-y-auto rounded-md border border-border bg-surface shadow-lg animate-fade-in">
           {suggestions.map((product) => (
             <button
               key={product._id}
