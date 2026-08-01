@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, X, Search } from "lucide-react";
+import { ShoppingCart, Menu, X } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import Logo from "./Logo";
 import TopBar from "./TopBar";
@@ -9,7 +9,6 @@ import SearchBar from "./SearchBar";
 const Navbar = () => {
   const totalItems = useCartStore((state) => state.totalItems());
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   const navLinks = [
     { label: "Home", to: "/" },
@@ -45,14 +44,6 @@ const Navbar = () => {
           </nav>
 
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => setMobileSearchOpen((v) => !v)}
-              className="text-text hover:text-primary md:hidden"
-              aria-label="Toggle search"
-            >
-              <Search className="h-5 w-5" />
-            </button>
-
             <Link to="/cart" className="relative flex items-center text-text hover:text-primary">
               <ShoppingCart className="h-5 w-5" />
               {totalItems > 0 && (
@@ -72,11 +63,10 @@ const Navbar = () => {
           </div>
         </div>
 
-        {mobileSearchOpen && (
-          <div className="animate-fade-in-up border-t border-border px-6 py-3 md:hidden">
-            <SearchBar onNavigate={() => setMobileSearchOpen(false)} />
-          </div>
-        )}
+        {/* Search bar always visible on mobile — no click needed */}
+        <div className="border-t border-border px-6 py-3 md:hidden">
+          <SearchBar />
+        </div>
 
         {mobileOpen && (
           <div className="animate-fade-in-up border-t border-border bg-navbar px-6 py-4 lg:hidden">
