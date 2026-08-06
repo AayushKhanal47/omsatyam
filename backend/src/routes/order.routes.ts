@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createOrder, getOrders, updateOrderStatus, trackOrder, trackOrdersByPhone } from "@/controllers/order.controller";
+import { createOrder, getOrders, updateOrderStatus, deleteOrder, trackOrder, trackOrdersByPhone } from "@/controllers/order.controller";
 import { protect } from "@/middleware/auth.middleware";
 import { mongoRateLimit } from "@/utils/mongoRateLimit";
 
@@ -17,5 +17,6 @@ router.get("/track-by-phone", trackOrdersByPhone);
 router.get("/track/:id", trackOrder);
 router.get("/", protect, getOrders);
 router.put("/:id/status", protect, updateOrderStatus);
+router.delete("/:id", protect, deleteOrder);
 
 export default router;

@@ -21,9 +21,9 @@ export const createOrder = async (orderData: CreateOrderInput) => {
   return data;
 };
 
-export const getOrders = async (status?: string, page = 1) => {
+export const getOrders = async (status?: string, page = 1, search?: string) => {
   const { data } = await api.get<ApiResponse<Order[]>>("/orders", {
-    params: { status: status || undefined, page, limit: 20 },
+    params: { status: status || undefined, page, limit: 20, search: search || undefined },
   });
   return data;
 };
@@ -44,5 +44,9 @@ export const trackOrdersByPhone = async (phone: string) => {
   const { data } = await api.get<ApiResponse<Order[]>>("/orders/track-by-phone", {
     params: { phone },
   });
+  return data;
+};
+export const deleteOrder = async (id: string) => {
+  const { data } = await api.delete<ApiResponse<null>>(`/orders/${id}`);
   return data;
 };

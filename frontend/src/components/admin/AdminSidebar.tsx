@@ -9,7 +9,7 @@ const links = [
   { to: "/admin/dashboard/account", label: "Account", icon: UserCog },
 ];
 
-const AdminSidebar = () => {
+const AdminSidebar = ({ onNavigate }: { onNavigate?: () => void }) => {
   return (
     <nav className="flex flex-col gap-1 p-4">
       {links.map((link) => (
@@ -17,6 +17,7 @@ const AdminSidebar = () => {
           key={link.to}
           to={link.to}
           end={link.end}
+          onClick={onNavigate}
           className={({ isActive }) =>
             `flex items-center gap-2.5 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
               isActive ? "bg-primary text-white" : "text-text hover:bg-bg"

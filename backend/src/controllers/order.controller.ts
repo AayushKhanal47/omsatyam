@@ -57,8 +57,12 @@ export const getOrders = async (req: Request, res: Response) => {
     const limit = Math.min(50, parseInt(req.query.limit as string) || 20);
     const skip = (page - 1) * limit;
 
-    const filter: Record<string, any> = {};
-    if (req.query.status) filter.status = req.query.status;
+const filter: Record<string, any> = {};
+if (req.query.status) filter.status = req.query.status;
+if (req.query.search) {
+  const searchRegex = new RegExp(req.query.search as string, "i");
+  filter.$or = [{ customerName: searchRegex }, { phone: searchRegex }, { clinicName: searchRegex }];
+}
 
     const [orders, total] = await Promise.all([
       Order.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
@@ -135,6 +139,18 @@ export const trackOrdersByPhone = async (req: Request, res: Response) => {
     return res.status(200).json({ success: true, data: orders });
   } catch (error) {
     console.error("trackOrdersByPhone error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+export const deleteOrder = async (req: Request, res: Response) => {
+  try {
+    const order = await Order.findByIdAndDelete(req.params.id);
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+    return res.status(200).json({ success: true, message: "Order deleted" });
+  } catch (error) {
+    console.error("deleteOrder error:", error);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
