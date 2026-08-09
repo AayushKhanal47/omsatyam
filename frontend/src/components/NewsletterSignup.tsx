@@ -1,6 +1,6 @@
 import { Bell, ArrowRight } from "lucide-react";
 
-const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "9779800000000";
+const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "9779855046299";
 
 const NewsletterSignup = () => {
   const message = "Hi, I'd like to receive updates on new products and offers from Om Satyam.";

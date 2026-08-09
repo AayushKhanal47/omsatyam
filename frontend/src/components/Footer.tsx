@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Share2, AtSign, MessageCircle, Phone, Mail, MapPin } from "lucide-react";
 import Logo from "./Logo";
 
-const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "9779843966885";
+const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "9779855046299";
 
 const Footer = () => {
   const whatsappUrl = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent("Hi, I have a question about your products.");

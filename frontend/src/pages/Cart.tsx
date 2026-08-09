@@ -4,7 +4,7 @@ import { useCartStore } from "@/store/cartStore";
 import { createOrder } from "@/api/orders";
 import { usePageTitle } from "@/hooks/usePageTitle";
 
-const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "9779800000000";
+const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "9779855046299";
 
 const Cart = () => {
   usePageTitle("Cart", "Review your cart and checkout.");

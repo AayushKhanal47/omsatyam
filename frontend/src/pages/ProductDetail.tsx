@@ -7,7 +7,7 @@ import { useCartStore } from "@/store/cartStore";
 import { useToastStore } from "@/store/toastStore";
 import { usePageTitle } from "@/hooks/usePageTitle";
 
-const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "9779800000000";
+const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "9779855046299";
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
