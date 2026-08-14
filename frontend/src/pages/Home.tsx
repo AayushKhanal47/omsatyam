@@ -24,7 +24,10 @@ const search = searchParams.get("search") || undefined;
 const category = searchParams.get("category") || undefined;
 const brand = searchParams.get("brand") || undefined;
 
-  usePageTitle("Home", "Genuine dental and surgical supplies for clinics across Nepal.");
+  usePageTitle(
+  "Dental Supplier in Nepal",
+  "Om Satyam Dental & Surgical supplies quality dental and surgical products across Nepal, including dental instruments, consumables, materials and equipment from trusted brands."
+);
 
   useEffect(() => {
     const fetchProducts = async () => {
