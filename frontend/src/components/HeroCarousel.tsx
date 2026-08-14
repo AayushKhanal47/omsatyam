@@ -11,12 +11,12 @@ interface Slide {
 
 const slides: Slide[] = [
   {
-    title: "Professional Dental Instruments",
-    subtitle:
-      "Premium instruments trusted by dental professionals across Nepal.",
-    cta: "Browse Products",
-    image: "/banners/banner1.jpeg",
-  },
+  title: "Om Satyam Dental & Surgical",
+  subtitle:
+    "Trusted dental and surgical supplies for clinics, dentists and healthcare professionals across Nepal.",
+  cta: "Browse Products",
+  image: "/banners/banner1.jpeg",
+},
   {
     title: "Premium Dental Consumables",
     subtitle:
