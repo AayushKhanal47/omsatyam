@@ -14,7 +14,7 @@ const BrandMarquee = () => (
             to={`/products?brand=${encodeURIComponent(brand.name)}`}
             aria-hidden={i >= logos.length}
             tabIndex={i >= logos.length ? -1 : undefined}
-            className="flex h-16 w-40 flex-shrink-0 items-center justify-center opacity-80 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
+            className="flex h-16 w-40 flex-shrink-0 items-center justify-center transition-transform duration-300 hover:scale-105"
           >
             <img src={brand.logo} alt={brand.name} className="max-h-14 max-w-full object-contain mix-blend-multiply" />
           </Link>
