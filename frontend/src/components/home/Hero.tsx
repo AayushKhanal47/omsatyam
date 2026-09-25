@@ -51,7 +51,7 @@ const Hero = ({ products, brandCount, categoryCount }: HeroProps) => {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full border border-border bg-white px-7 py-3.5 text-sm font-semibold text-text transition-colors hover:border-primary hover:text-primary"
             >
-              Talk to an expert
+              Get a quote on WhatsApp
             </a>
           </div>
 

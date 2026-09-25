@@ -107,7 +107,7 @@ const Navbar = () => {
               rel="noopener noreferrer"
               className="hidden whitespace-nowrap rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-hover xl:block"
             >
-              Talk to an expert
+              WhatsApp us
             </a>
 
             <button

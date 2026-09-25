@@ -6,12 +6,12 @@ const points = [
   {
     icon: BadgeCheck,
     title: "Genuine products",
-    desc: "Every product comes from the manufacturer or an authorised channel — no substitutions.",
+    desc: "Only original products from the brands we list — never copies.",
   },
   {
     icon: Headphones,
-    title: "Honest guidance",
-    desc: "We help you compare options and choose what actually suits your practice and budget.",
+    title: "Straight answers",
+    desc: "Tell us your budget and how you work, and we'll point you to what fits.",
   },
   {
     icon: Truck,
@@ -20,8 +20,8 @@ const points = [
   },
   {
     icon: PackageCheck,
-    title: "Support after purchase",
-    desc: "Questions about setup, use or spare parts? We're a WhatsApp message away.",
+    title: "Help after you buy",
+    desc: "Setup questions, usage or spare parts — message us on WhatsApp and we'll sort it out.",
   },
 ];
 
@@ -39,9 +39,9 @@ const WhyChooseUs = () => {
         <Reveal>
           <SectionHeading
             tone="dark"
-            eyebrow="Why Om Satyam"
-            title="A supply partner clinics can rely on"
-            description="We focus on genuine equipment, honest advice and dependable support — before and long after you buy."
+            eyebrow="Why clinics order from Om Satyam"
+            title="Less running around, more time with patients"
+            description="One place for your equipment and your everyday stock, with someone local to call when you need help."
           />
         </Reveal>
 

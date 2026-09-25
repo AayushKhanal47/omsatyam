@@ -12,6 +12,7 @@ import ProductRail from "@/components/home/ProductRail";
 import Spotlight from "@/components/home/Spotlight";
 import ShopByBrand from "@/components/home/ShopByBrand";
 import ClinicCta from "@/components/home/ClinicCta";
+import LocalStore from "@/components/home/LocalStore";
 import WhyChooseUs from "@/components/WhyChooseUs";
 
 const byCategory = (products: Product[], categories: Category[], pattern: RegExp) => {
@@ -63,9 +64,9 @@ const Home = () => {
 
       <ProductRail
         className="bg-white"
-        eyebrow="From the catalogue"
-        title="Featured equipment"
-        description="A selection of chairs, imaging, handpieces and instruments clinics ask us about most."
+        eyebrow="Clinic equipment"
+        title="Chairs, imaging & handpieces"
+        description="The bigger investments — for setting up a new practice or upgrading the one you have."
         products={sections?.featured ?? null}
         viewAllTo="/products"
       />
@@ -89,6 +90,7 @@ const Home = () => {
       />
 
       <ShopByBrand products={products} />
+      <LocalStore />
       <WhyChooseUs />
       <ClinicCta />
     </div>

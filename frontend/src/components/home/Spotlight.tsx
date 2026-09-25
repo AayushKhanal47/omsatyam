@@ -72,7 +72,7 @@ const Spotlight = ({ eyebrow, product, reverse = false, tone = "white" }: Spotli
               rel="noopener noreferrer"
               className="inline-flex items-center rounded-full border border-border bg-white px-6 py-3 text-sm font-semibold text-text transition-colors hover:border-primary hover:text-primary"
             >
-              Request a quote
+              Get a quote
             </a>
           </div>
         </Reveal>

@@ -12,9 +12,9 @@ const ShopByBrand = ({ products }: { products: Product[] | null }) => {
     <section className="mx-auto max-w-7xl px-5 py-20 sm:px-8">
       <Reveal>
         <SectionHeading
-          eyebrow="Shop by brand"
-          title="Equipment from trusted global manufacturers"
-          description="Genuine product lines sourced directly from the manufacturer or an authorised channel — no grey-market imports."
+          eyebrow="Brands"
+          title="Shop a brand you already trust"
+          description="Original stock from Bondent, Hongke, Orikam, VinciSmile, TEALTH and more — bought through authorised channels."
           action={
             <Link to="/brands" className="group inline-flex items-center gap-2 text-sm font-semibold text-primary">
               All brands <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

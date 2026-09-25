@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import type { Product } from "@/types";
 import { useCartStore } from "@/store/cartStore";
 import { useToastStore } from "@/store/toastStore";
@@ -18,64 +18,71 @@ const isNew = (createdAt?: string) => {
 const ProductCard = ({ product }: ProductCardProps) => {
   const addItem = useCartStore((state) => state.addItem);
   const showToast = useToastStore((state) => state.show);
-  const badge = !product.inStock ? "Out of stock" : product.isFeatured ? "Featured" : isNew(product.createdAt) ? "New" : null;
+  const brand = findBrand(product.brand)?.name ?? product.brand;
 
   return (
-    <div className="group flex flex-col">
+    <div className="group flex h-full flex-col rounded-3xl border border-border bg-white p-3 transition-all duration-300 hover:border-primary/25 hover:shadow-[0_18px_36px_-24px_rgba(14,43,45,0.45)]">
       <Link
         to={`/product/${product.slug}`}
-        className="relative block aspect-[4/3] overflow-hidden rounded-2xl border border-border bg-white transition-shadow duration-300 group-hover:shadow-[0_18px_40px_-20px_rgba(14,43,45,0.35)]"
+        className="relative block aspect-square overflow-hidden rounded-2xl border border-border/70 bg-white"
       >
         {product.images?.[0] ? (
           <img
             src={product.images[0]}
             alt={product.name}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            className="h-full w-full object-contain p-2 transition-transform duration-500 ease-out group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-sm text-text-secondary">No image</div>
         )}
 
-        {badge && (
-          <span
-            className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider shadow-sm ${
-              product.inStock ? "bg-white/95 text-text" : "bg-danger text-white"
-            }`}
-          >
-            {badge}
-          </span>
-        )}
-
-        {product.inStock && (
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              addItem(product);
-              showToast(product.name + " added to cart");
-            }}
-            aria-label={`Add ${product.name} to cart`}
-            className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white opacity-0 shadow-lg transition-all duration-300 hover:bg-primary-hover focus-visible:opacity-100 group-hover:opacity-100 max-lg:opacity-100"
-          >
-            <Plus className="h-5 w-5" />
-          </button>
-        )}
-      </Link>
-
-      <Link to={`/product/${product.slug}`} className="mt-4 flex flex-1 flex-col">
-        <div className="flex items-center justify-between gap-3">
-          <span className="truncate text-[11px] font-semibold uppercase tracking-[0.14em] text-text-secondary">
-            {findBrand(product.brand)?.name ?? (product.brand || product.category?.name || "Om Satyam")}
-          </span>
-          <ArrowRight className="h-4 w-4 flex-shrink-0 text-primary transition-transform duration-300 group-hover:translate-x-1" />
+        <div className="absolute left-2.5 top-2.5 flex gap-1.5">
+          {!product.inStock && (
+            <span className="rounded-md bg-danger px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+              Out of stock
+            </span>
+          )}
+          {product.inStock && isNew(product.createdAt) && (
+            <span className="rounded-md bg-accent px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+              New
+            </span>
+          )}
         </div>
-        <h3 className="mt-1.5 line-clamp-2 font-display text-base font-semibold leading-snug text-text transition-colors group-hover:text-primary">
-          {product.name}
-        </h3>
-        <p className="mt-1.5 text-sm text-text-secondary">
-          {product.priceOnRequest ? "Contact for price" : `Rs. ${product.price.toLocaleString()}`}
-        </p>
       </Link>
+
+      <div className="flex flex-1 flex-col px-1.5 pb-1 pt-3.5">
+        {product.category?.name && (
+          <span className="w-fit rounded-md bg-primary-soft px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+            {product.category.name}
+          </span>
+        )}
+        <Link to={`/product/${product.slug}`} className="mt-2">
+          <h3 className="line-clamp-2 font-display text-[15px] font-semibold leading-snug text-text transition-colors hover:text-primary">
+            {product.name}
+          </h3>
+        </Link>
+        {brand && <p className="mt-1 truncate text-xs text-text-secondary">by {brand}</p>}
+
+        <div className="mt-auto flex items-center justify-between gap-2 pt-4">
+          <span className={`text-sm font-semibold ${product.priceOnRequest ? "text-accent" : "text-text"}`}>
+            {product.priceOnRequest ? "Price on request" : `Rs. ${product.price.toLocaleString()}`}
+          </span>
+          {product.inStock && (
+            <button
+              onClick={() => {
+                addItem(product);
+                showToast(product.name + " added to cart");
+              }}
+              aria-label={`Add ${product.name} to cart`}
+              className="flex h-9 flex-shrink-0 items-center gap-1 rounded-full bg-primary pl-2.5 pr-3.5 text-xs font-semibold text-white transition-colors hover:bg-primary-hover"
+            >
+              <Plus className="h-4 w-4" />
+              Add
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

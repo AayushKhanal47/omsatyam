@@ -13,8 +13,8 @@ const SectionHeading = ({ eyebrow, title, description, action, align = "left", t
   const dark = tone === "dark";
   return (
     <div
-      className={`mb-10 flex flex-wrap items-end gap-6 ${
-        align === "center" ? "flex-col items-center text-center" : "justify-between"
+      className={`mb-10 flex gap-6 ${
+        align === "center" ? "flex-col items-center text-center" : "flex-wrap items-end justify-between"
       }`}
     >
       <div className={align === "center" ? "max-w-2xl" : "max-w-xl"}>

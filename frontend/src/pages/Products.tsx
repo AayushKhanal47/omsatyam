@@ -221,7 +221,7 @@ const Products = () => {
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 xl:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 sm:gap-5 xl:grid-cols-3">
             {products === null && !error
               ? Array.from({ length: 9 }).map((_, i) => <ProductCardSkeleton key={i} />)
               : results.slice(0, visible).map((product) => <ProductCard key={product._id} product={product} />)}

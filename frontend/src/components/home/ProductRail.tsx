@@ -37,11 +37,11 @@ const ProductRail = ({ eyebrow, title, description, products, viewAllTo, classNa
             }
           />
         </Reveal>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
           {products === null
             ? Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)
             : products.map((product, i) => (
-                <Reveal key={product._id} delay={(i % 4) * 70}>
+                <Reveal key={product._id} delay={(i % 4) * 70} className="h-full">
                   <ProductCard product={product} />
                 </Reveal>
               ))}
