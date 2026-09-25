@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -11,8 +11,8 @@ import TrackOrder from "@/pages/TrackOrder";
 import NotFound from "@/pages/NotFound";
 import AdminLogin from "@/pages/admin/AdminLogin";
 import AdminOverview from "@/pages/admin/AdminOverview";
-import AddProduct from "@/pages/admin/AddProduct";
 import ProductsPage from "@/pages/admin/ProductsPage";
+import CategoryManager from "@/components/admin/CategoryManager";
 import EditProduct from "@/pages/admin/EditProduct";
 import OrdersPage from "@/pages/admin/OrdersPage";
 import AccountPage from "@/pages/admin/AccountPage";
@@ -44,9 +44,10 @@ function App() {
           }
         >
           <Route index element={<AdminOverview />} />
-          <Route path="add-product" element={<AddProduct />} />
+          <Route path="add-product" element={<Navigate to="/admin/dashboard/products" replace />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="products/:id/edit" element={<EditProduct />} />
+          <Route path="categories" element={<CategoryManager />} />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="account" element={<AccountPage />} />
         </Route>

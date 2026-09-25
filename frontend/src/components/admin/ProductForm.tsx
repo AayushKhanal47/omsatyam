@@ -4,6 +4,7 @@ import { getCategories } from "@/api/categories";
 import { createProduct, updateProduct } from "@/api/adminProducts";
 import { uploadImageToCloudinary } from "@/api/cloudinary";
 import type { Category, Product } from "@/types";
+import { cardCls, errorCls, fileInputCls, hintCls, inputCls, labelCls, primaryBtnCls, successCls } from "./ui";
 
 interface SpecRow {
   key: string;
@@ -136,7 +137,7 @@ const ProductForm = ({ onCreated, editingProduct, onCancelEdit }: ProductFormPro
 
       resetForm();
       setSuccess(true);
-     onCreated?.();
+      onCreated?.();
       if (isEditing && onCancelEdit) onCancelEdit();
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: any) {
@@ -153,81 +154,26 @@ const ProductForm = ({ onCreated, editingProduct, onCancelEdit }: ProductFormPro
   };
 
   return (
-    <form onSubmit={handleSubmit} className="animate-fade-in-up flex flex-col gap-4 rounded-lg border border-border bg-surface p-6">
+    <form onSubmit={handleSubmit} className={`${cardCls} flex flex-col gap-4 p-6`}>
       <div className="flex items-center justify-between">
-        <h2 className="font-display text-lg font-semibold text-text">
-          {isEditing ? "Edit product" : "Add product"}
-        </h2>
+        <h2 className="text-sm font-semibold text-admin-navy">{isEditing ? "Edit product" : "Add product"}</h2>
         {isEditing && (
-          <button type="button" onClick={handleCancel} className="text-sm font-medium text-text-secondary hover:text-text">
+          <button type="button" onClick={handleCancel} className="text-xs font-semibold text-admin-slate hover:text-admin-navy">
             Cancel
           </button>
         )}
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-text">
-            Name <span className="text-danger">*</span>
-          </label>
-          <input required value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary" />
-        </div>
-
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-text">
-            Category <span className="text-danger">*</span>
-          </label>
-          <select required value={category} onChange={(e) => setCategory(e.target.value)} className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary">
-            <option value="">Select category</option>
-            {categories.map((cat) => (
-              <option key={cat._id} value={cat._id}>{cat.name}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-text">
-          Description <span className="text-danger">*</span>
-        </label>
-        <textarea required rows={3} value={description} onChange={(e) => setDescription(e.target.value)} className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary" />
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-3">
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-text">Price (Rs.)</label>
-          <input type="number" min="0" disabled={priceOnRequest} value={price} onChange={(e) => setPrice(e.target.value)} className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary disabled:opacity-40" />
-          <label className="mt-1.5 flex items-center gap-1.5 text-xs text-text-secondary">
-            <input type="checkbox" checked={priceOnRequest} onChange={(e) => setPriceOnRequest(e.target.checked)} />
-            Contact for price
-          </label>
+        <div className="mb-1.5 flex items-center justify-between">
+          <label className="text-sm font-medium text-admin-navy">Product photos</label>
+          <span className="text-xs text-admin-muted">{images.length} added</span>
         </div>
-
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-text">Stock</label>
-          <input type="number" min="0" value={stock} onChange={(e) => setStock(e.target.value)} className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary" />
-        </div>
-
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-text">SKU (optional)</label>
-          <input value={sku} onChange={(e) => setSku(e.target.value)} className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary" />
-        </div>
-      </div>
-
-      <div>
-        <label className="mb-1.5 block text-sm font-medium text-text">Brand (optional)</label>
-        <input value={brand} onChange={(e) => setBrand(e.target.value)} className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary" />
-      </div>
-
-      <div>
-        <label className="mb-1.5 block text-sm font-medium text-text">Product images</label>
-        <p className="mb-2 text-xs text-text-secondary">Add one or more photos. The first one is used as the main thumbnail.</p>
-
         {images.length > 0 && (
           <div className="mb-3 flex flex-wrap gap-3">
             {images.map((url, i) => (
-              <div key={i} className="relative">
-                <img src={url} alt={`Product ${i + 1}`} className="h-20 w-20 rounded-md border border-border object-cover" />
+              <div key={url + i} className="relative">
+                <img src={url} alt={`Product ${i + 1}`} className="h-16 w-16 rounded-xl border border-admin-border object-cover" />
                 {i === 0 && (
                   <span className="absolute -left-1 -top-1 rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-semibold text-white">Main</span>
                 )}
@@ -243,42 +189,76 @@ const ProductForm = ({ onCreated, editingProduct, onCancelEdit }: ProductFormPro
             ))}
           </div>
         )}
-
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={handleImageSelect}
-          disabled={uploading}
-          className="block w-full text-sm text-text-secondary file:mr-3 file:rounded-md file:border-0 file:bg-primary file:px-3.5 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-primary-hover"
-        />
-        {uploading && <p className="mt-1 text-xs text-text-secondary">Uploading...</p>}
+        <input type="file" accept="image/*" multiple onChange={handleImageSelect} disabled={uploading} className={fileInputCls} />
+        <p className={hintCls}>{uploading ? "Uploading…" : "The first photo is used as the main thumbnail."}</p>
         {uploadError && <p className="mt-1 text-xs text-danger">{uploadError}</p>}
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-text">Specifications</label>
+        <label className={labelCls}>Name <span className="text-danger">*</span></label>
+        <input required value={name} onChange={(e) => setName(e.target.value)} className={inputCls} />
+      </div>
+
+      <div>
+        <label className={labelCls}>Brand</label>
+        <input value={brand} onChange={(e) => setBrand(e.target.value)} placeholder="e.g. Bondent" className={inputCls} />
+      </div>
+
+      <div>
+        <label className={labelCls}>Category <span className="text-danger">*</span></label>
+        <select required value={category} onChange={(e) => setCategory(e.target.value)} className={inputCls}>
+          <option value="">Select category</option>
+          {categories.map((cat) => (
+            <option key={cat._id} value={cat._id}>{cat.name}</option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label className={labelCls}>Description <span className="text-danger">*</span></label>
+        <textarea required rows={4} value={description} onChange={(e) => setDescription(e.target.value)} className={inputCls} />
+      </div>
+
+      <div className="grid grid-cols-3 gap-3">
+        <div>
+          <label className={labelCls}>Price (Rs.)</label>
+          <input type="number" min="0" disabled={priceOnRequest} value={price} onChange={(e) => setPrice(e.target.value)} className={inputCls} />
+        </div>
+        <div>
+          <label className={labelCls}>Stock</label>
+          <input type="number" min="0" value={stock} onChange={(e) => setStock(e.target.value)} className={inputCls} />
+        </div>
+        <div>
+          <label className={labelCls}>SKU</label>
+          <input value={sku} onChange={(e) => setSku(e.target.value)} className={inputCls} />
+        </div>
+      </div>
+      <label className="-mt-2 flex items-center gap-2 text-xs text-admin-slate">
+        <input type="checkbox" checked={priceOnRequest} onChange={(e) => setPriceOnRequest(e.target.checked)} className="accent-primary" />
+        Contact for price (hide the price on the site)
+      </label>
+
+      <div>
+        <label className={labelCls}>Specifications</label>
         {specs.map((spec, i) => (
           <div key={i} className="mb-2 flex gap-2">
-            <input placeholder="Key (e.g. Material)" value={spec.key} onChange={(e) => updateSpec(i, "key", e.target.value)} className="w-1/3 rounded-md border border-border bg-bg px-3 py-2 text-sm outline-none focus:border-primary" />
-            <input placeholder="Value (e.g. Stainless Steel)" value={spec.value} onChange={(e) => updateSpec(i, "value", e.target.value)} className="flex-1 rounded-md border border-border bg-bg px-3 py-2 text-sm outline-none focus:border-primary" />
+            <input placeholder="Key (e.g. Material)" value={spec.key} onChange={(e) => updateSpec(i, "key", e.target.value)} className={`${inputCls} w-2/5`} />
+            <input placeholder="Value" value={spec.value} onChange={(e) => updateSpec(i, "value", e.target.value)} className={inputCls} />
             {specs.length > 1 && (
-              <button type="button" onClick={() => removeSpecRow(i)} className="px-2 text-sm text-danger">✕</button>
+              <button type="button" onClick={() => removeSpecRow(i)} className="px-1 text-danger" aria-label="Remove specification">
+                <X className="h-4 w-4" />
+              </button>
             )}
           </div>
         ))}
-        <button type="button" onClick={addSpecRow} className="mt-1 text-sm font-medium text-primary hover:underline">+ Add specification</button>
+        <button type="button" onClick={addSpecRow} className="text-xs font-semibold text-primary hover:text-primary-hover">+ Add specification</button>
       </div>
 
-      {error && <p className="rounded-md bg-danger/10 px-3.5 py-2.5 text-sm text-danger">{error}</p>}
-      {success && (
-        <p className="animate-fade-in rounded-md bg-success/10 px-3.5 py-2.5 text-sm text-success">
-          Product {isEditing ? "updated" : "created"} successfully.
-        </p>
-      )}
+      {error && <p className={errorCls}>{error}</p>}
+      {success && <p className={`animate-fade-in ${successCls}`}>Product {isEditing ? "updated" : "created"} successfully.</p>}
 
-      <button type="submit" disabled={loading || uploading} className="mt-2 rounded-md bg-primary py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:opacity-50">
-        {loading ? (isEditing ? "Saving..." : "Creating...") : (isEditing ? "Save changes" : "Create product")}
+      <button type="submit" disabled={loading || uploading} className={primaryBtnCls}>
+        {loading ? (isEditing ? "Saving…" : "Creating…") : (isEditing ? "Save changes" : "Add product")}
       </button>
     </form>
   );

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate, Link } from "react-router-dom";
 import ProductForm from "@/components/admin/ProductForm";
-import { getProducts } from "@/api/products";
+import { getAllProducts } from "@/api/adminProducts";
+import PageHeader from "@/components/admin/PageHeader";
 import type { Product } from "@/types";
 
 const EditProduct = () => {
@@ -18,9 +19,9 @@ const EditProduct = () => {
     if (stateProduct || !id) return;
 
     // Fallback if the page was opened/refreshed directly without navigation state
-    getProducts({ limit: 50 })
-      .then((res) => {
-        const found = res.data.find((p) => p._id === id);
+    getAllProducts()
+      .then((products) => {
+        const found = products.find((p) => p._id === id);
         if (found) {
           setProduct(found);
         } else {
@@ -35,13 +36,13 @@ const EditProduct = () => {
   };
 
   if (loading) {
-    return <p className="text-sm text-text-secondary">Loading product...</p>;
+    return <p className="text-sm text-admin-slate">Loading product…</p>;
   }
 
   if (notFound || !product) {
     return (
       <div>
-        <p className="text-sm text-text-secondary">Product not found.</p>
+        <p className="text-sm text-admin-slate">Product not found.</p>
         <Link to="/admin/dashboard/products" className="mt-2 inline-block text-sm font-medium text-primary hover:underline">
           Back to products
         </Link>
@@ -51,6 +52,7 @@ const EditProduct = () => {
 
   return (
     <div className="animate-fade-in-up max-w-2xl">
+      <PageHeader title="Edit product" subtitle={product.name} />
       <ProductForm
         key={product._id}
         editingProduct={product}

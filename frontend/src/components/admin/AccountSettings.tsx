@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { changePassword, updateProfile } from "@/api/auth";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { cardCls, errorCls, inputCls, labelCls, primaryBtnCls, successCls } from "./ui";
 
 const AccountSettings = () => {
   const { admin } = useAdminAuth();
@@ -54,52 +55,52 @@ const AccountSettings = () => {
 
   return (
     <div className="grid gap-6 sm:grid-cols-2">
-      <form onSubmit={handleProfileSubmit} className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-6">
-        <h2 className="font-display text-lg font-semibold text-text">Account details</h2>
+      <form onSubmit={handleProfileSubmit} className={`${cardCls} flex flex-col gap-4 p-6`}>
+        <h2 className="text-sm font-semibold text-admin-navy">Account details</h2>
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-text">Name</label>
+          <label className={labelCls}>Name</label>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary"
+            className={inputCls}
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-text">Email</label>
+          <label className={labelCls}>Email</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-md border border-border bg-bg px-3.5 py-2 text-sm outline-none focus:border-primary"
+            className={inputCls}
           />
         </div>
-        {profileErr && <p className="rounded-md bg-danger/10 px-3.5 py-2.5 text-sm text-danger">{profileErr}</p>}
-        {profileMsg && <p className="rounded-md bg-success/10 px-3.5 py-2.5 text-sm text-success">{profileMsg}</p>}
+        {profileErr && <p className={errorCls}>{profileErr}</p>}
+        {profileMsg && <p className={successCls}>{profileMsg}</p>}
         <button
           type="submit"
           disabled={profileLoading}
-          className="rounded-md bg-primary py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:opacity-50"
+          className={primaryBtnCls}
         >
           {profileLoading ? "Saving..." : "Save changes"}
         </button>
       </form>
 
-      <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-6">
-        <h2 className="font-display text-lg font-semibold text-text">Change password</h2>
+      <form onSubmit={handlePasswordSubmit} className={`${cardCls} flex flex-col gap-4 p-6`}>
+        <h2 className="text-sm font-semibold text-admin-navy">Change password</h2>
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-text">Current password</label>
+          <label className={labelCls}>Current password</label>
           <div className="relative">
             <input
               type={showCurrentPassword ? "text" : "password"}
               required
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full rounded-md border border-border bg-bg px-3.5 py-2 pr-10 text-sm outline-none focus:border-primary"
+              className={`${inputCls} pr-10`}
             />
             <button
               type="button"
               onClick={() => setShowCurrentPassword((v) => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-admin-muted hover:text-admin-navy"
               aria-label={showCurrentPassword ? "Hide password" : "Show password"}
             >
               {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -107,7 +108,7 @@ const AccountSettings = () => {
           </div>
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-text">New password</label>
+          <label className={labelCls}>New password</label>
           <div className="relative">
             <input
               type={showNewPassword ? "text" : "password"}
@@ -115,24 +116,24 @@ const AccountSettings = () => {
               minLength={8}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full rounded-md border border-border bg-bg px-3.5 py-2 pr-10 text-sm outline-none focus:border-primary"
+              className={`${inputCls} pr-10`}
             />
             <button
               type="button"
               onClick={() => setShowNewPassword((v) => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-admin-muted hover:text-admin-navy"
               aria-label={showNewPassword ? "Hide password" : "Show password"}
             >
               {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
         </div>
-        {passwordErr && <p className="rounded-md bg-danger/10 px-3.5 py-2.5 text-sm text-danger">{passwordErr}</p>}
-        {passwordMsg && <p className="rounded-md bg-success/10 px-3.5 py-2.5 text-sm text-success">{passwordMsg}</p>}
+        {passwordErr && <p className={errorCls}>{passwordErr}</p>}
+        {passwordMsg && <p className={successCls}>{passwordMsg}</p>}
         <button
           type="submit"
           disabled={passwordLoading}
-          className="rounded-md bg-primary py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:opacity-50"
+          className={primaryBtnCls}
         >
           {passwordLoading ? "Updating..." : "Update password"}
         </button>
