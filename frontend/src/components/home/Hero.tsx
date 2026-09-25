@@ -5,18 +5,10 @@ import { whatsappLink } from "@/lib/contact";
 
 interface HeroProps {
   products: Product[] | null;
-  brandCount: number;
-  categoryCount: number;
 }
 
-const Hero = ({ products, brandCount, categoryCount }: HeroProps) => {
+const Hero = ({ products }: HeroProps) => {
   const spotlight = products?.find((p) => p.images?.[0] && /chair|unit/i.test(p.name)) ?? products?.find((p) => p.images?.[0]);
-
-  const stats = [
-    { value: products ? `${products.length}+` : "–", label: "Products" },
-    { value: brandCount ? `${brandCount}` : "–", label: "Trusted brands" },
-    { value: categoryCount ? `${categoryCount}` : "–", label: "Categories" },
-  ];
 
   return (
     <section className="relative overflow-hidden">
@@ -54,15 +46,6 @@ const Hero = ({ products, brandCount, categoryCount }: HeroProps) => {
               Get a quote on WhatsApp
             </a>
           </div>
-
-          <dl className="mt-12 grid max-w-md grid-cols-3 gap-6 border-t border-border pt-8">
-            {stats.map((s) => (
-              <div key={s.label}>
-                <dt className="font-display text-2xl font-bold text-text sm:text-3xl">{s.value}</dt>
-                <dd className="mt-1 text-xs text-text-secondary sm:text-sm">{s.label}</dd>
-              </div>
-            ))}
-          </dl>
         </div>
 
         <div className="relative animate-fade-in lg:pl-6">

@@ -14,6 +14,7 @@ export interface CreateOrderInput {
   address: string;
   items: OrderItemInput[];
   notes?: string;
+  turnstileToken?: string;
 }
 
 export const createOrder = async (orderData: CreateOrderInput) => {

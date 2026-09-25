@@ -4,6 +4,7 @@ import type { Product } from "@/types";
 import { useCartStore } from "@/store/cartStore";
 import { useToastStore } from "@/store/toastStore";
 import { findBrand } from "@/lib/brands";
+import { addToCartMessage } from "@/lib/limits";
 
 interface ProductCardProps {
   product: Product;
@@ -71,8 +72,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           {product.inStock && (
             <button
               onClick={() => {
-                addItem(product);
-                showToast(product.name + " added to cart");
+                showToast(addToCartMessage(addItem(product), product.name));
               }}
               aria-label={`Add ${product.name} to cart`}
               className="flex h-9 flex-shrink-0 items-center gap-1 rounded-full bg-primary pl-2.5 pr-3.5 text-xs font-semibold text-white transition-colors hover:bg-primary-hover"

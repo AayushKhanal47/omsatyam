@@ -9,6 +9,7 @@ import { useToastStore } from "@/store/toastStore";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { findBrand } from "@/lib/brands";
 import { whatsappLink } from "@/lib/contact";
+import { addToCartMessage, MAX_QTY_PER_ITEM } from "@/lib/limits";
 
 // Renders a plain-text description: "Heading:" lines, "- " bullets and paragraphs.
 const DescriptionBody = ({ text }: { text: string }) => {
@@ -89,8 +90,9 @@ const ProductDetail = () => {
 
   const handleAddToCart = () => {
     if (!product) return;
-    addItem(product, quantity);
-    showToast(product.name + " added to cart");
+    const result = addItem(product, quantity);
+    showToast(addToCartMessage(result, product.name));
+    if (result === "item-max" || result === "cart-full") return;
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
@@ -216,8 +218,9 @@ const ProductDetail = () => {
                   </button>
                   <span className="w-8 text-center text-sm font-semibold">{quantity}</span>
                   <button
-                    onClick={() => setQuantity((q) => q + 1)}
-                    className="flex h-12 w-11 items-center justify-center text-text hover:text-primary"
+                    onClick={() => setQuantity((q) => Math.min(MAX_QTY_PER_ITEM, q + 1))}
+                    disabled={quantity >= MAX_QTY_PER_ITEM}
+                    className="flex h-12 w-11 items-center justify-center text-text hover:text-primary disabled:opacity-30"
                     aria-label="Increase quantity"
                   >
                     <Plus className="h-4 w-4" />

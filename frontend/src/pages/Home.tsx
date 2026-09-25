@@ -3,7 +3,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import type { Category, Product } from "@/types";
 import { useCatalog } from "@/hooks/useCatalog";
 import { usePageTitle } from "@/hooks/usePageTitle";
-import { brandCounts, findBrand } from "@/lib/brands";
+import { findBrand } from "@/lib/brands";
 import Hero from "@/components/home/Hero";
 import TrustStrip from "@/components/home/TrustStrip";
 import BrandMarquee from "@/components/home/BrandMarquee";
@@ -44,7 +44,6 @@ const Home = () => {
       handpiece: withPoints(pick(/handpiece/i)),
       endo: pick(/endodontic/i).slice(0, 4),
       consumables: [...pick(/consumable/i), ...pick(/restorative/i)].slice(0, 4),
-      brandCount: brandCounts(products).length,
     };
   }, [products, categories]);
 
@@ -57,7 +56,7 @@ const Home = () => {
 
   return (
     <div>
-      <Hero products={products} brandCount={sections?.brandCount ?? 0} categoryCount={categories?.length ?? 0} />
+      <Hero products={products} />
       <TrustStrip />
       <BrandMarquee />
       <CategoryShowcase categories={categories} products={products} />

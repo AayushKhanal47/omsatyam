@@ -12,9 +12,16 @@ const orderLimiter = mongoRateLimit({
   keyPrefix: "order",
 });
 
+const trackLimiter = mongoRateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: "Too many tracking attempts. Please try again in a few minutes.",
+  keyPrefix: "track",
+});
+
 router.post("/", orderLimiter, createOrder);
-router.get("/track-by-phone", trackOrdersByPhone);
-router.get("/track/:id", trackOrder);
+router.get("/track-by-phone", trackLimiter, trackOrdersByPhone);
+router.get("/track/:id", trackLimiter, trackOrder);
 router.get("/", protect, getOrders);
 router.put("/:id/status", protect, updateOrderStatus);
 router.delete("/:id", protect, deleteOrder);

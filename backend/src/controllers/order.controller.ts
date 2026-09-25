@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { Order } from "@/models/Order.model";
 import { Product } from "@/models/Product.model";
-import { createOrderSchema } from "@/utils/validation";
+import { createOrderSchema, MAX_QTY_PER_ITEM } from "@/utils/validation";
 import { sendTelegramNotification, sendEmailNotification } from "@/utils/notify";
+import { verifyTurnstile } from "@/utils/turnstile";
 
 export const createOrder = async (req: Request, res: Response) => {
   try {
@@ -11,23 +12,41 @@ export const createOrder = async (req: Request, res: Response) => {
       return res.status(400).json({ success: false, message: parsed.error.issues[0].message });
     }
 
-    const { customerName, clinicName, phone, address, items, notes } = parsed.data;
+    const { customerName, clinicName, phone, address, items, notes, website, turnstileToken } = parsed.data;
+
+    // Honeypot: the hidden "website" field is only ever filled in by bots. Pretend it worked.
+    if (website) {
+      return res.status(201).json({ success: true, data: null });
+    }
+
+    if (!(await verifyTurnstile(turnstileToken, req.ip))) {
+      return res.status(400).json({ success: false, message: "Please complete the verification and try again." });
+    }
+
+    // Merge repeated lines for the same product so the per-item cap can't be sidestepped.
+    const merged = new Map<string, number>();
+    for (const item of items) merged.set(item.product, (merged.get(item.product) ?? 0) + item.quantity);
 
     const orderItems = [];
     let totalAmount = 0;
 
-    for (const item of items) {
-      const product = await Product.findById(item.product);
-      if (!product) {
-        return res.status(404).json({ success: false, message: `Product not found: ${item.product}` });
+    for (const [productId, quantity] of merged) {
+      if (quantity > MAX_QTY_PER_ITEM) {
+        return res.status(400).json({
+          success: false,
+          message: `You can order up to ${MAX_QTY_PER_ITEM} of each product online. Contact us for larger quantities.`,
+        });
       }
-      const itemTotal = product.price * item.quantity;
-      totalAmount += itemTotal;
+      const product = await Product.findOne({ _id: productId, isActive: true });
+      if (!product) {
+        return res.status(404).json({ success: false, message: "One of the products in your cart is no longer available." });
+      }
+      totalAmount += product.price * quantity;
       orderItems.push({
         product: product.id,
         name: product.name,
         price: product.price,
-        quantity: item.quantity,
+        quantity,
       });
     }
 
@@ -59,8 +78,9 @@ export const getOrders = async (req: Request, res: Response) => {
 
 const filter: Record<string, any> = {};
 if (req.query.status) filter.status = req.query.status;
-if (req.query.search) {
-  const searchRegex = new RegExp(req.query.search as string, "i");
+if (typeof req.query.search === "string" && req.query.search) {
+  const escaped = req.query.search.slice(0, 100).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const searchRegex = new RegExp(escaped, "i");
   filter.$or = [{ customerName: searchRegex }, { phone: searchRegex }, { clinicName: searchRegex }];
 }
 
@@ -106,13 +126,13 @@ export const trackOrder = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { phone } = req.query;
 
-    if (!phone) {
+    if (typeof phone !== "string" || !phone) {
       return res.status(400).json({ success: false, message: "Phone number is required" });
     }
 
     const order = await Order.findById(id);
 
-    if (!order || order.phone.replace(/\s+/g, "") !== (phone as string).replace(/\s+/g, "")) {
+    if (!order || order.phone.replace(/\s+/g, "") !== phone.replace(/\s+/g, "")) {
       return res.status(404).json({ success: false, message: "Order not found. Check your Order ID and phone number." });
     }
 
@@ -127,11 +147,11 @@ export const trackOrdersByPhone = async (req: Request, res: Response) => {
   try {
     const { phone } = req.query;
 
-    if (!phone || (phone as string).trim().length < 7) {
+    if (typeof phone !== "string" || phone.trim().length < 7) {
       return res.status(400).json({ success: false, message: "Enter a valid phone number" });
     }
 
-    const cleaned = (phone as string).replace(/\s+/g, "");
+    const cleaned = phone.replace(/\s+/g, "");
     const orders = await Order.find({ phone: cleaned })
       .sort({ createdAt: -1 })
       .limit(10);

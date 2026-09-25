@@ -38,18 +38,34 @@ export const createCategorySchema = z.object({
   parent: z.string().optional(),
 });
 
+// Keep in sync with frontend/src/lib/limits.ts
+export const MAX_QTY_PER_ITEM = 50;
+export const MAX_ORDER_LINES = 30;
+
 export const orderItemSchema = z.object({
-  product: z.string().min(1, "Product ID is required"),
-  quantity: z.number().int().min(1, "Quantity must be at least 1"),
+  product: z.string().regex(/^[a-f\d]{24}$/i, "Invalid product"),
+  quantity: z
+    .number()
+    .int()
+    .min(1, "Quantity must be at least 1")
+    .max(MAX_QTY_PER_ITEM, `You can order up to ${MAX_QTY_PER_ITEM} of each product online`),
 });
 
 export const createOrderSchema = z.object({
-  customerName: z.string().min(2, "Name is required"),
-   clinicName: z.string().optional(),
-  phone: z.string().min(7, "Enter a valid phone number"),
-  address: z.string().min(5, "Address is required"),
-  items: z.array(orderItemSchema).min(1, "Order must contain at least one item"),
-  notes: z.string().optional(),
+  customerName: z.string().trim().min(2, "Name is required").max(100, "Name is too long"),
+  clinicName: z.string().trim().max(120, "Clinic name is too long").optional(),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^\+?[\d\s-]{7,20}$/, "Enter a valid phone number"),
+  address: z.string().trim().min(5, "Address is required").max(300, "Address is too long"),
+  items: z
+    .array(orderItemSchema)
+    .min(1, "Order must contain at least one item")
+    .max(MAX_ORDER_LINES, `An online order can have up to ${MAX_ORDER_LINES} different products`),
+  notes: z.string().trim().max(1000, "Notes are too long").optional(),
+  website: z.string().optional(),
+  turnstileToken: z.string().optional(),
 });
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, "Current password is required"),
