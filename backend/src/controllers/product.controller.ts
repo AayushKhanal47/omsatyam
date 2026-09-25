@@ -18,6 +18,8 @@ if (req.query.search) filter.$text = { $search: req.query.search as string };
     if (req.query.sort === "price_asc") sortOption = { price: 1 };
     if (req.query.sort === "price_desc") sortOption = { price: -1 };
     if (req.query.sort === "name_asc") sortOption = { name: 1 };
+    // Tie-break on _id so pages stay stable when several products share a sort value.
+    sortOption._id = -1;
 
     const [products, total] = await Promise.all([
       Product.find(filter).populate("category", "name slug").sort(sortOption).skip(skip).limit(limit),
