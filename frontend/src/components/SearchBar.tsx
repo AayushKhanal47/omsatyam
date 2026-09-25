@@ -47,13 +47,16 @@ const SearchBar = ({ variant = "light", onNavigate }: SearchBarProps) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const submitSearch = () => {
+    if (!query.trim()) return;
+    navigate(`/products?search=${encodeURIComponent(query.trim())}`);
+    setShowDropdown(false);
+    onNavigate?.();
+  };
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (query.trim()) {
-      navigate(`/?search=${encodeURIComponent(query.trim())}`);
-      setShowDropdown(false);
-      onNavigate?.();
-    }
+    submitSearch();
   };
 
   const handleSelectProduct = (slug: string) => {
@@ -81,11 +84,11 @@ const SearchBar = ({ variant = "light", onNavigate }: SearchBarProps) => {
               setShowDropdown(true);
             }}
             onFocus={() => setShowDropdown(true)}
-            placeholder="Search instruments, brands, consumables..."
-            className={`w-full rounded-md border-2 py-2.5 pl-10 pr-9 text-sm outline-none transition-all ${
+            placeholder="Search products, brands…"
+            className={`w-full rounded-full border py-2.5 pl-10 pr-9 text-sm outline-none transition-all ${
               isDark
                 ? "border-white/20 bg-white/10 text-white placeholder-white/50 focus:border-white/50 focus:bg-white/15"
-                : "border-border bg-bg text-text focus:border-primary focus:ring-4 focus:ring-primary/10"
+                : "border-border bg-bg text-text focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10"
             }`}
           />
           {loading && (
@@ -99,28 +102,28 @@ const SearchBar = ({ variant = "light", onNavigate }: SearchBarProps) => {
       </form>
 
       {showDropdown && query.trim().length >= 2 && suggestions.length > 0 && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-96 overflow-y-auto rounded-md border border-border bg-surface shadow-lg animate-fade-in">
+        <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-96 min-w-[18rem] overflow-y-auto rounded-2xl border border-border bg-surface shadow-xl animate-fade-in">
           {suggestions.map((product) => (
             <button
               key={product._id}
               onClick={() => handleSelectProduct(product.slug)}
               className="flex w-full items-center gap-3 border-b border-border px-4 py-3 text-left last:border-b-0 hover:bg-bg"
             >
-              <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-md bg-bg">
+              <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg bg-bg">
                 {product.images?.[0] && (
                   <img src={product.images[0]} alt="" className="h-full w-full object-cover" />
                 )}
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-text">{product.name}</p>
-                <p className="font-mono text-xs text-text-secondary">
+                <p className="text-xs text-text-secondary">
                   {product.priceOnRequest ? "Contact for price" : `Rs. ${product.price.toLocaleString()}`}
                 </p>
               </div>
             </button>
           ))}
           <button
-            onClick={handleSubmit as any}
+            onClick={submitSearch}
             className="w-full px-4 py-2.5 text-center text-sm font-medium text-primary hover:bg-bg"
           >
             See all results for "{query}"

@@ -28,3 +28,13 @@ export const getBrands = async () => {
   const { data } = await api.get<ApiResponse<string[]>>("/products/brands");
   return data;
 };
+
+// The products endpoint caps each page at 50, so walk every page to get the full catalogue.
+export const getAllProducts = async () => {
+  const first = await getProducts({ limit: 50, page: 1 });
+  const totalPages = first.pagination?.totalPages ?? 1;
+  const rest = await Promise.all(
+    Array.from({ length: totalPages - 1 }, (_, i) => getProducts({ limit: 50, page: i + 2 }))
+  );
+  return [first, ...rest].flatMap((res) => res.data);
+};

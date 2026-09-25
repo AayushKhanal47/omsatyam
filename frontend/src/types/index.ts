@@ -26,6 +26,7 @@ export interface Product {
   brand?: string;
   sku?: string;
   isFeatured: boolean;
+  createdAt?: string;
 }
 
 export interface Pagination {

@@ -4,6 +4,8 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminLayout from "@/components/admin/AdminLayout";
 import Home from "@/pages/Home";
 import ProductDetail from "@/pages/ProductDetail";
+import Products from "@/pages/Products";
+import Brands from "@/pages/Brands";
 import Cart from "@/pages/Cart";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
@@ -26,6 +28,9 @@ function App() {
         {/* Storefront routes */}
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/shop" element={<Navigate to="/products" replace />} />
+          <Route path="/brands" element={<Brands />} />
           <Route path="/product/:slug" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/about" element={<About />} />

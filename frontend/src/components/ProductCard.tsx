@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { ShoppingCart } from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
 import type { Product } from "@/types";
 import { useCartStore } from "@/store/cartStore";
 import { useToastStore } from "@/store/toastStore";
+import { findBrand } from "@/lib/brands";
 
 interface ProductCardProps {
   product: Product;
@@ -17,33 +18,33 @@ const isNew = (createdAt?: string) => {
 const ProductCard = ({ product }: ProductCardProps) => {
   const addItem = useCartStore((state) => state.addItem);
   const showToast = useToastStore((state) => state.show);
+  const badge = !product.inStock ? "Out of stock" : product.isFeatured ? "Featured" : isNew(product.createdAt) ? "New" : null;
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-surface transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-      <div className="absolute left-3 top-3 z-10 flex flex-col gap-1.5">
-        {isNew((product as any).createdAt) && (
-          <span className="rounded-full bg-accent px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-wide text-white">
-            New
-          </span>
-        )}
-        {!product.inStock && (
-          <span className="rounded-full bg-danger px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-wide text-white">
-            Out of stock
-          </span>
-        )}
-      </div>
-
-      <Link to={`/product/${product.slug}`} className="relative block aspect-square overflow-hidden bg-bg">
+    <div className="group flex flex-col">
+      <Link
+        to={`/product/${product.slug}`}
+        className="relative block aspect-[4/3] overflow-hidden rounded-2xl border border-border bg-white transition-shadow duration-300 group-hover:shadow-[0_18px_40px_-20px_rgba(14,43,45,0.35)]"
+      >
         {product.images?.[0] ? (
           <img
             src={product.images[0]}
             alt={product.name}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-sm text-text-secondary">
-            No image
-          </div>
+          <div className="flex h-full w-full items-center justify-center text-sm text-text-secondary">No image</div>
+        )}
+
+        {badge && (
+          <span
+            className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider shadow-sm ${
+              product.inStock ? "bg-white/95 text-text" : "bg-danger text-white"
+            }`}
+          >
+            {badge}
+          </span>
         )}
 
         {product.inStock && (
@@ -53,44 +54,28 @@ const ProductCard = ({ product }: ProductCardProps) => {
               addItem(product);
               showToast(product.name + " added to cart");
             }}
-            className="absolute inset-x-3 bottom-3 flex translate-y-12 items-center justify-center gap-2 rounded-full bg-white/95 py-2.5 text-sm font-medium text-text opacity-0 shadow-md transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
+            aria-label={`Add ${product.name} to cart`}
+            className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white opacity-0 shadow-lg transition-all duration-300 hover:bg-primary-hover focus-visible:opacity-100 group-hover:opacity-100 max-lg:opacity-100"
           >
-            <ShoppingCart className="h-4 w-4" />
-            Quick add
+            <Plus className="h-5 w-5" />
           </button>
         )}
       </Link>
 
-      <div className="flex flex-1 flex-col gap-1 p-4">
-        <span className="font-mono text-[10px] uppercase tracking-wide text-primary">
-          {product.category?.name || "Uncategorized"}
-        </span>
-
-        <Link to={`/product/${product.slug}`}>
-          <h3 className="mt-0.5 font-display text-sm font-semibold leading-snug text-text transition-colors hover:text-primary">
-            {product.name}
-          </h3>
-        </Link>
-
-        {(product.brand || product.sku) && (
-          <p className="truncate font-mono text-[11px] text-text-secondary">
-            {product.brand}
-            {product.brand && product.sku && " · "}
-            {product.sku && `#${product.sku}`}
-          </p>
-        )}
-
-        <div className="mt-2 flex items-center justify-between">
-          {product.priceOnRequest ? (
-            <span className="font-mono text-sm font-semibold text-accent">Contact for price</span>
-          ) : (
-            <span className="font-mono text-base font-semibold text-text">
-              Rs. {product.price.toLocaleString()}
-            </span>
-          )}
-          <span className={`h-2 w-2 flex-shrink-0 rounded-full ${product.inStock ? "bg-success" : "bg-danger"}`} />
+      <Link to={`/product/${product.slug}`} className="mt-4 flex flex-1 flex-col">
+        <div className="flex items-center justify-between gap-3">
+          <span className="truncate text-[11px] font-semibold uppercase tracking-[0.14em] text-text-secondary">
+            {findBrand(product.brand)?.name ?? (product.brand || product.category?.name || "Om Satyam")}
+          </span>
+          <ArrowRight className="h-4 w-4 flex-shrink-0 text-primary transition-transform duration-300 group-hover:translate-x-1" />
         </div>
-      </div>
+        <h3 className="mt-1.5 line-clamp-2 font-display text-base font-semibold leading-snug text-text transition-colors group-hover:text-primary">
+          {product.name}
+        </h3>
+        <p className="mt-1.5 text-sm text-text-secondary">
+          {product.priceOnRequest ? "Contact for price" : `Rs. ${product.price.toLocaleString()}`}
+        </p>
+      </Link>
     </div>
   );
 };

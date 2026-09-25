@@ -10,6 +10,9 @@
 
   --color-primary: #0B5E64;
   --color-primary-hover: #094A4F;
+  --color-primary-soft: #E6F0EF;
+  --color-ink: #0E2B2D;
+  --color-cream: #F7F1E3;
   --color-accent: #B8842E;
   --color-whatsapp: #25D366;
   --color-whatsapp-hover: #1EBE5A;
@@ -72,6 +75,16 @@ h1, h2, h3, h4 {
   }
   .animate-scale-in {
     animation: scale-in 0.3s ease-out both;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  .animate-marquee {
+    animation: marquee 40s linear infinite;
+  }
+  .animate-marquee:hover {
+    animation-play-state: paused;
   }
   .animate-delay-1 { animation-delay: 0.08s; }
   .animate-delay-2 { animation-delay: 0.16s; }

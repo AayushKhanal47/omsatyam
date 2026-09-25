@@ -1,126 +1,96 @@
-import { useEffect, useState } from "react";
-import { useSearchParams, useLocation, useNavigate } from "react-router-dom";
-import { getProducts } from "@/api/products";
-import type { Product } from "@/types";
-import ProductCard from "@/components/ProductCard";
-import HeroCarousel from "@/components/HeroCarousel";
-import TrustBar from "@/components/TrustBar";
-import CategoryStrip from "@/components/CategoryStrip";
-import BrandsSection from "@/components/BrandsSection";
-import WhyChooseUs from "@/components/WhyChooseUs";
-import ProductCardSkeleton from "@/components/ProductCardSkeleton";
+import { useMemo } from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import type { Category, Product } from "@/types";
+import { useCatalog } from "@/hooks/useCatalog";
 import { usePageTitle } from "@/hooks/usePageTitle";
-import BrandFilter from "@/components/BrandFilter";
-import NewsletterSignup from "@/components/NewsletterSignup";
+import { brandCounts, findBrand } from "@/lib/brands";
+import Hero from "@/components/home/Hero";
+import TrustStrip from "@/components/home/TrustStrip";
+import BrandMarquee from "@/components/home/BrandMarquee";
+import CategoryShowcase from "@/components/home/CategoryShowcase";
+import ProductRail from "@/components/home/ProductRail";
+import Spotlight from "@/components/home/Spotlight";
+import ShopByBrand from "@/components/home/ShopByBrand";
+import ClinicCta from "@/components/home/ClinicCta";
+import WhyChooseUs from "@/components/WhyChooseUs";
+
+const byCategory = (products: Product[], categories: Category[], pattern: RegExp) => {
+  const cat = categories.find((c) => pattern.test(c.name));
+  return cat ? products.filter((p) => p.category?._id === cat._id) : [];
+};
 
 const Home = () => {
-  const [searchParams] = useSearchParams();
   const location = useLocation();
-  const navigate = useNavigate();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-const search = searchParams.get("search") || undefined;
-const category = searchParams.get("category") || undefined;
-const brand = searchParams.get("brand") || undefined;
+  const { products, categories } = useCatalog();
 
   usePageTitle(
-  "Dental Supplier in Nepal",
-  "Om Satyam Dental & Surgical supplies quality dental and surgical products across Nepal, including dental instruments, consumables, materials and equipment from trusted brands."
-);
+    "Dental Supplier in Nepal",
+    "Om Satyam Dental & Surgical supplies quality dental and surgical products across Nepal, including dental chairs, imaging, handpieces, instruments, consumables and equipment from trusted brands."
+  );
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-       const res = await getProducts({
-  page: 1,
-  limit: 20,
-  search,
-  category,
-  brand,
-});
-        setProducts(res.data);
-      } catch (err) {
-        setError("Could not load products. Is the backend server running?");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
+  const sections = useMemo(() => {
+    if (!products || !categories) return null;
+    // Only feature products from known brands that have a photo.
+    const showcase = products.filter((p) => p.images?.[0] && findBrand(p.brand));
+    const pick = (pattern: RegExp) => byCategory(showcase, categories, pattern);
+    // Two from each equipment category, with anything marked featured first.
+    const equipment = [/chair|unit/i, /imaging|x-?ray/i, /microscope/i, /handpiece/i].flatMap((re) => pick(re).slice(0, 2));
+    const featured = [...new Set([...showcase.filter((p) => p.isFeatured), ...equipment])].slice(0, 8);
+    const withPoints = (list: Product[]) => list.find((p) => p.description.includes("\n- ")) ?? list[0];
+    return {
+      featured,
+      imaging: withPoints(pick(/imaging|x-?ray/i)),
+      handpiece: withPoints(pick(/handpiece/i)),
+      endo: pick(/endodontic/i).slice(0, 4),
+      consumables: [...pick(/consumable/i), ...pick(/restorative/i)].slice(0, 4),
+      brandCount: brandCounts(products).length,
     };
-    fetchProducts();
-  }, [search, category, brand]);
+  }, [products, categories]);
 
-  useEffect(() => {
-    if (location.hash) {
-      const el = document.querySelector(location.hash);
-      if (el) {
-        setTimeout(() => el.scrollIntoView({ behavior: "smooth" }), 100);
-      }
-    }
-  }, [location]);
+  // Old links such as /?search=… or /?category=… now live on the catalogue page.
+  if (location.search && /(^|[?&])(search|category|brand)=/.test(location.search)) {
+    return <Navigate to={`/products${location.search}`} replace />;
+  }
 
-  const isFiltered = Boolean(search || category);
+  const categorySlug = (pattern: RegExp) => categories?.find((c) => pattern.test(c.name))?.slug;
 
   return (
     <div>
-      <HeroCarousel />
-      <TrustBar />
-      <CategoryStrip />
-<div id="shop" className="mx-auto max-w-6xl px-6 py-10">
-  <div className="mb-6">
-    <BrandFilter />
-  </div>
+      <Hero products={products} brandCount={sections?.brandCount ?? 0} categoryCount={categories?.length ?? 0} />
+      <TrustStrip />
+      <BrandMarquee />
+      <CategoryShowcase categories={categories} products={products} />
 
-  <div className="mb-8">
-    <h2 className="font-display text-2xl font-semibold text-text sm:text-3xl">
-      {search ? `Results for "${search}"` : "All products"}
-    </h2>
-    <p className="mt-2 text-sm text-text-secondary">
-      Instruments, consumables, and equipment for clinics and practitioners.
-    </p>
-  </div>
+      <ProductRail
+        className="bg-white"
+        eyebrow="From the catalogue"
+        title="Featured equipment"
+        description="A selection of chairs, imaging, handpieces and instruments clinics ask us about most."
+        products={sections?.featured ?? null}
+        viewAllTo="/products"
+      />
 
-        {loading && (
-          <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <ProductCardSkeleton key={i} />
-            ))}
-          </div>
-        )}
+      <Spotlight eyebrow="Diagnostic imaging" product={sections?.imaging} tone="cream" />
 
-        {error && (
-          <p className="rounded-md bg-danger/10 px-4 py-3 text-sm text-danger">{error}</p>
-        )}
+      <ProductRail
+        eyebrow="Endodontics"
+        title="Endo motors, apex locators & activators"
+        products={sections ? sections.endo : null}
+        viewAllTo={`/products?category=${categorySlug(/endodontic/i) ?? ""}`}
+      />
 
-        {!loading && !error && products.length === 0 && (
-          <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed border-border px-6 py-10">
-            <p className="text-sm text-text-secondary">
-              {isFiltered
-                ? "No products matched your search or filter."
-                : "No products yet — check back soon."}
-            </p>
-            {isFiltered && (
-              <button
-                onClick={() => navigate("/")}
-                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
-              >
-                Clear search and browse all products
-              </button>
-            )}
-          </div>
-        )}
+      <Spotlight eyebrow="Handpieces & motors" product={sections?.handpiece} reverse tone="cream" />
 
-        <div className="grid animate-fade-in-up grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
-          {products.map((product) => (
-            <ProductCard key={product._id} product={product} />
-          ))}
-        </div>
-      </div>
+      <ProductRail
+        eyebrow="Everyday essentials"
+        title="Consumables & restorative materials"
+        products={sections ? sections.consumables : null}
+        viewAllTo={`/products?category=${categorySlug(/consumable/i) ?? ""}`}
+      />
 
-  <BrandsSection />
-<NewsletterSignup />
-<WhyChooseUs />
+      <ShopByBrand products={products} />
+      <WhyChooseUs />
+      <ClinicCta />
     </div>
   );
 };

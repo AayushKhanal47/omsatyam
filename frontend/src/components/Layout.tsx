@@ -13,8 +13,7 @@ const Layout = () => {
       </main>
       <Footer />
       <WhatsAppButton />
-      <WhatsAppButton />
-<Toast />
+      <Toast />
     </div>
   );
 };

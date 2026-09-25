@@ -1,13 +1,57 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useParams, Link } from "react-router-dom";
+import { BadgeCheck, Check, Headphones, Minus, Plus, ShoppingBag, Truck } from "lucide-react";
 import { getProductBySlug, getProducts } from "@/api/products";
 import ProductCard from "@/components/ProductCard";
 import type { Product } from "@/types";
 import { useCartStore } from "@/store/cartStore";
 import { useToastStore } from "@/store/toastStore";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { findBrand } from "@/lib/brands";
+import { whatsappLink } from "@/lib/contact";
 
-const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "9779855046299";
+// Renders a plain-text description: "Heading:" lines, "- " bullets and paragraphs.
+const DescriptionBody = ({ text }: { text: string }) => {
+  const blocks: ReactNode[] = [];
+  let bullets: string[] = [];
+  const flush = () => {
+    if (bullets.length) {
+      blocks.push(
+        <ul key={blocks.length} className="grid gap-2.5">
+          {bullets.map((b, i) => (
+            <li key={i} className="flex items-start gap-3">
+              <span className="mt-1 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary">
+                <Check className="h-2.5 w-2.5" />
+              </span>
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+      );
+      bullets = [];
+    }
+  };
+  for (const raw of text.replace(/\*\*/g, "").split("\n")) {
+    const line = raw.trim();
+    if (line.startsWith("- ")) {
+      bullets.push(line.slice(2));
+      continue;
+    }
+    flush();
+    if (!line) continue;
+    blocks.push(
+      line.endsWith(":") && line.length < 60 ? (
+        <h3 key={blocks.length} className="pt-2 font-display text-base font-semibold text-text">
+          {line.slice(0, -1)}
+        </h3>
+      ) : (
+        <p key={blocks.length}>{line}</p>
+      )
+    );
+  }
+  flush();
+  return <div className="flex flex-col gap-4 text-sm leading-relaxed text-text-secondary sm:text-[15px]">{blocks}</div>;
+};
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -19,34 +63,29 @@ const ProductDetail = () => {
   const addItem = useCartStore((state) => state.addItem);
   const showToast = useToastStore((state) => state.show);
   const [added, setAdded] = useState(false);
-const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
 
   usePageTitle(product?.name || "Product", product?.description);
-useEffect(() => {
-  if (!slug) return;
 
-  setLoading(true);
-  setActiveImage(0);
+  useEffect(() => {
+    if (!slug) return;
 
-  getProductBySlug(slug)
-    .then((res) => {
-      setProduct(res.data);
+    setLoading(true);
+    setError(null);
+    setActiveImage(0);
+    setQuantity(1);
 
-      return getProducts({
-        category: res.data.category?._id,
-        limit: 5,
-      });
-    })
-    .then((res) => {
-      if (res) {
-        setRelatedProducts(
-          res.data.filter((p: Product) => p.slug !== slug).slice(0, 4)
-        );
-      }
-    })
-    .catch(() => setError("Product not found"))
-    .finally(() => setLoading(false));
-}, [slug]);
+    getProductBySlug(slug)
+      .then((res) => {
+        setProduct(res.data);
+        return getProducts({ category: res.data.category?._id, limit: 9 });
+      })
+      .then((res) => {
+        if (res) setRelatedProducts(res.data.filter((p: Product) => p.slug !== slug && p.images?.[0]).slice(0, 4));
+      })
+      .catch(() => setError("Product not found"))
+      .finally(() => setLoading(false));
+  }, [slug]);
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -56,21 +95,16 @@ useEffect(() => {
     setTimeout(() => setAdded(false), 2000);
   };
 
-  const whatsappMessage = product
-    ? `Hi, I'm interested in: ${product.name}${product.sku ? ` (#${product.sku})` : ""}. Could you share more details?`
-    : "";
-  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappMessage)}`;
-
   if (loading) {
     return (
-      <div className="mx-auto max-w-6xl px-6 py-10">
-        <div className="grid gap-10 lg:grid-cols-2">
-          <div className="aspect-square animate-pulse rounded-lg bg-border" />
-          <div className="flex flex-col gap-3">
-            <div className="h-4 w-1/4 animate-pulse rounded bg-border" />
-            <div className="h-8 w-3/4 animate-pulse rounded bg-border" />
-            <div className="h-6 w-1/3 animate-pulse rounded bg-border" />
-            <div className="h-20 w-full animate-pulse rounded bg-border" />
+      <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8">
+        <div className="grid gap-12 lg:grid-cols-2">
+          <div className="aspect-square animate-pulse rounded-3xl bg-border/70" />
+          <div className="flex flex-col gap-4">
+            <div className="h-4 w-1/4 animate-pulse rounded bg-border/70" />
+            <div className="h-10 w-3/4 animate-pulse rounded bg-border/70" />
+            <div className="h-6 w-1/3 animate-pulse rounded bg-border/70" />
+            <div className="h-28 w-full animate-pulse rounded bg-border/70" />
           </div>
         </div>
       </div>
@@ -79,173 +113,217 @@ useEffect(() => {
 
   if (error || !product) {
     return (
-      <div className="mx-auto max-w-6xl px-6 py-16 text-center">
-        <p className="text-sm text-text-secondary">Product not found.</p>
-        <Link to="/" className="mt-3 inline-block text-sm font-medium text-primary hover:underline">
-          Back to products
+      <div className="mx-auto max-w-7xl px-5 py-24 text-center sm:px-8">
+        <p className="font-display text-xl font-semibold text-text">Product not found</p>
+        <Link to="/products" className="mt-4 inline-block text-sm font-semibold text-primary hover:underline">
+          Browse all products
         </Link>
       </div>
     );
   }
 
-    return (
-    <div className="mx-auto max-w-6xl animate-fade-in-up px-6 py-10">
-      <Link to="/" className="text-sm text-text-secondary hover:text-primary">
-        ← Back to products
-      </Link>
+  const brand = findBrand(product.brand);
+  const brandLabel = brand?.name ?? product.brand;
+  const quoteUrl = whatsappLink(
+    `Hi, I'm interested in: ${product.name}${product.sku ? ` (#${product.sku})` : ""}. Could you share the price and details?`
+  );
 
-      <div className="mt-6 grid gap-10 lg:grid-cols-2">
-        <div>
-          <div className="aspect-square overflow-hidden rounded-lg border border-border bg-surface">
-            {product.images && product.images.length > 0 ? (
-              <img
-                src={product.images[activeImage]}
-                alt={product.name}
-                className="h-full w-full object-cover"
-              />
+  return (
+    <div className="animate-fade-in-up">
+      <div className="mx-auto max-w-7xl px-5 pt-8 sm:px-8">
+        <nav className="flex flex-wrap items-center gap-2 text-xs text-text-secondary">
+          <Link to="/" className="hover:text-primary">Home</Link>
+          <span>/</span>
+          <Link to="/products" className="hover:text-primary">Products</Link>
+          {product.category && (
+            <>
+              <span>/</span>
+              <Link to={`/products?category=${product.category.slug}`} className="hover:text-primary">
+                {product.category.name}
+              </Link>
+            </>
+          )}
+          <span>/</span>
+          <span className="line-clamp-1 text-text">{product.name}</span>
+        </nav>
+      </div>
+
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-8 sm:px-8 lg:grid-cols-2 lg:gap-16">
+        <div className="lg:sticky lg:top-40 lg:self-start">
+          <div className="aspect-square overflow-hidden rounded-3xl border border-border bg-white">
+            {product.images?.length > 0 ? (
+              <img src={product.images[activeImage]} alt={product.name} className="h-full w-full object-contain" />
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-text-secondary">
-                No image
-              </div>
+              <div className="flex h-full w-full items-center justify-center text-text-secondary">No image</div>
             )}
           </div>
 
-          {product.images && product.images.length > 1 && (
-            <div className="mt-3 flex gap-2">
+          {product.images?.length > 1 && (
+            <div className="mt-4 flex gap-3 overflow-x-auto pb-1">
               {product.images.map((img, i) => (
                 <button
-                  key={i}
+                  key={img + i}
                   onClick={() => setActiveImage(i)}
-                  className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border-2 transition-colors ${
-                    i === activeImage ? "border-primary" : "border-border"
+                  aria-label={`Show image ${i + 1}`}
+                  className={`h-20 w-20 flex-shrink-0 overflow-hidden rounded-2xl border-2 bg-white transition-colors ${
+                    i === activeImage ? "border-primary" : "border-border hover:border-primary/40"
                   }`}
                 >
-                  <img
-                    src={img}
-                    alt={`${product.name} ${i + 1}`}
-                    className="h-full w-full object-cover"
-                  />
+                  <img src={img} alt="" className="h-full w-full object-cover" />
                 </button>
               ))}
             </div>
           )}
         </div>
 
-        <div className="flex flex-col gap-4">
-          <div>
-            <span className="rounded bg-primary/10 px-2 py-0.5 font-mono text-xs font-medium uppercase tracking-wide text-primary">
-              {product.category?.name}
-            </span>
+        <div>
+          {brandLabel && (
+            <Link
+              to={`/products?brand=${encodeURIComponent(brandLabel)}`}
+              className="text-xs font-semibold uppercase tracking-[0.16em] text-primary hover:underline"
+            >
+              {brandLabel}
+            </Link>
+          )}
+          <h1 className="mt-3 font-display text-3xl font-bold leading-tight tracking-tight text-text sm:text-4xl">
+            {product.name}
+          </h1>
+          {product.sku && <p className="mt-2 text-sm text-text-secondary">SKU: {product.sku}</p>}
 
-            <h1 className="mt-3 font-display text-2xl font-semibold text-text sm:text-3xl">
-              {product.name}
-            </h1>
-
-            {product.sku && (
-              <p className="mt-1 font-mono text-sm text-text-secondary">
-                #{product.sku}
-              </p>
-            )}
-          </div>
-
-          <div>
-            {product.priceOnRequest ? (
-              <p className="font-mono text-xl font-semibold text-accent">
-                Contact for price
-              </p>
-            ) : (
-              <p className="font-mono text-2xl font-semibold text-text">
-                Rs. {product.price.toLocaleString()}
-              </p>
-            )}
-
-            <p
-              className={`mt-1 text-sm ${
-                product.inStock ? "text-success" : "text-danger"
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <p className="font-display text-2xl font-bold text-text">
+              {product.priceOnRequest ? "Contact for price" : `Rs. ${product.price.toLocaleString()}`}
+            </p>
+            <span
+              className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                product.inStock ? "bg-success/10 text-success" : "bg-danger/10 text-danger"
               }`}
             >
               {product.inStock ? "In stock" : "Out of stock"}
-            </p>
+            </span>
           </div>
 
-          <p className="text-sm leading-relaxed text-text-secondary">
-            {product.description}
-          </p>
-
-          {product.specifications.length > 0 && (
-            <div className="rounded-lg border border-border">
-              <table className="w-full text-sm">
-                <tbody>
-                  {product.specifications.map((spec, i) => (
-                    <tr
-                      key={i}
-                      className={i !== 0 ? "border-t border-border" : ""}
-                    >
-                      <td className="px-4 py-2.5 font-mono text-xs uppercase text-text-secondary">
-                        {spec.key}
-                      </td>
-                      <td className="px-4 py-2.5 text-text">
-                        {spec.value}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {product.inStock && (
-            <div className="flex items-center gap-3">
-              <div className="flex items-center rounded-md border border-border">
+          <div className="mt-8 flex flex-col gap-3">
+            {product.inStock && (
+              <div className="flex gap-3">
+                <div className="flex items-center rounded-full border border-border bg-white">
+                  <button
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    className="flex h-12 w-11 items-center justify-center text-text hover:text-primary"
+                    aria-label="Decrease quantity"
+                  >
+                    <Minus className="h-4 w-4" />
+                  </button>
+                  <span className="w-8 text-center text-sm font-semibold">{quantity}</span>
+                  <button
+                    onClick={() => setQuantity((q) => q + 1)}
+                    className="flex h-12 w-11 items-center justify-center text-text hover:text-primary"
+                    aria-label="Increase quantity"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
                 <button
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="px-3 py-2 text-text hover:bg-bg"
+                  onClick={handleAddToCart}
+                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-primary text-sm font-semibold text-white transition-colors hover:bg-primary-hover"
                 >
-                  −
-                </button>
-
-                <span className="w-10 text-center text-sm">{quantity}</span>
-
-                <button
-                  onClick={() => setQuantity((q) => q + 1)}
-                  className="px-3 py-2 text-text hover:bg-bg"
-                >
-                  +
+                  <ShoppingBag className="h-4 w-4" />
+                  {added ? "Added to cart ✓" : "Add to cart"}
                 </button>
               </div>
+            )}
+            <a
+              href={quoteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-whatsapp text-sm font-semibold text-whatsapp transition-colors hover:bg-whatsapp/10"
+            >
+              Request a quote on WhatsApp
+            </a>
+          </div>
 
-              <button
-                onClick={handleAddToCart}
-                className="flex-1 rounded-md bg-primary py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
-              >
-                {added ? "Added ✓" : "Add to cart"}
-              </button>
+          <div className="mt-8 grid grid-cols-3 gap-3 rounded-2xl border border-border bg-white p-4">
+            {[
+              { icon: BadgeCheck, label: "Genuine product" },
+              { icon: Truck, label: "Nepal-wide delivery" },
+              { icon: Headphones, label: "Expert support" },
+            ].map((item) => (
+              <div key={item.label} className="flex flex-col items-center gap-2 text-center">
+                <item.icon className="h-5 w-5 text-primary" />
+                <span className="text-xs font-medium text-text">{item.label}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 border-t border-border pt-8">
+            <h2 className="font-display text-lg font-semibold text-text">Overview</h2>
+            <div className="mt-4">
+              <DescriptionBody text={product.description} />
+            </div>
+          </div>
+
+          {product.specifications.length > 0 && (
+            <div className="mt-10">
+              <h2 className="font-display text-lg font-semibold text-text">Specifications</h2>
+              <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-white">
+                <table className="w-full text-sm">
+                  <tbody>
+                    {product.specifications.map((spec, i) => (
+                      <tr key={i} className={i % 2 ? "bg-bg" : ""}>
+                        <td className="w-2/5 px-4 py-3 align-top font-medium text-text-secondary">{spec.key}</td>
+                        <td className="px-4 py-3 text-text">{spec.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
 
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-md border border-whatsapp py-2.5 text-sm font-medium text-whatsapp transition-colors hover:bg-whatsapp/10"
-          >
-            Ask about this on WhatsApp
-          </a>
+          <dl className="mt-10 grid grid-cols-2 gap-4 border-t border-border pt-6 text-sm">
+            {product.category && (
+              <div>
+                <dt className="text-text-secondary">Category</dt>
+                <dd className="mt-1 font-medium">
+                  <Link to={`/products?category=${product.category.slug}`} className="text-text hover:text-primary">
+                    {product.category.name}
+                  </Link>
+                </dd>
+              </div>
+            )}
+            {brandLabel && (
+              <div>
+                <dt className="text-text-secondary">Brand</dt>
+                <dd className="mt-1 font-medium text-text">{brandLabel}</dd>
+              </div>
+            )}
+          </dl>
         </div>
       </div>
 
       {relatedProducts.length > 0 && (
-        <div className="mt-16">
-          <h2 className="font-display text-xl font-semibold text-text">
-            Related products
-          </h2>
-
-          <div className="mt-6 grid grid-cols-2 gap-5 sm:grid-cols-4">
-            {relatedProducts.map((p) => (
-              <ProductCard key={p._id} product={p} />
-            ))}
+        <section className="mt-12 border-t border-border bg-white">
+          <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8">
+            <div className="mb-8 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">You may also like</p>
+                <h2 className="mt-2 font-display text-2xl font-bold text-text sm:text-3xl">
+                  More in {product.category?.name ?? "this category"}
+                </h2>
+              </div>
+              {product.category && (
+                <Link to={`/products?category=${product.category.slug}`} className="text-sm font-semibold text-primary hover:underline">
+                  View all
+                </Link>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-4">
+              {relatedProducts.map((p) => (
+                <ProductCard key={p._id} product={p} />
+              ))}
+            </div>
           </div>
-        </div>
+        </section>
       )}
     </div>
   );
