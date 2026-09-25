@@ -58,7 +58,7 @@ const AdminLayout = () => {
   );
 
   return (
-    <div className="admin-theme min-h-screen bg-admin-bg text-text lg:flex">
+    <div className="min-h-screen bg-admin-bg text-text lg:flex">
       {/* Desktop sidebar */}
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-admin-border bg-white lg:flex">
         {sidebarContent}

@@ -22,12 +22,12 @@
   --color-danger: #B3492F;
 
   /* Admin dashboard */
-  --color-admin-bg: #EEF4F8;
-  --color-admin-border: #D7E1EA;
-  --color-admin-navy: #1F2C41;
+  --color-admin-bg: #EEF4F6;
+  --color-admin-border: #D7E1E6;
+  --color-admin-navy: #1F2C33;
   --color-admin-slate: #56637A;
   --color-admin-muted: #7C8899;
-  --color-admin-tint: #E1ECF3;
+  --color-admin-tint: #E1EEEF;
 
   --font-display: 'Plus Jakarta Sans', sans-serif;
   --font-body: 'Inter', sans-serif;
@@ -43,12 +43,6 @@ body {
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
-}
-
-/* Admin screens use a blue accent in place of the storefront teal */
-.admin-theme {
-  --color-primary: #3E7DA6;
-  --color-primary-hover: #33688C;
 }
 
 :focus-visible {
