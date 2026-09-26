@@ -45,7 +45,7 @@ const Navbar = () => {
       >
         <div className="mx-auto flex max-w-7xl items-center gap-6 px-5 py-3 sm:px-8">
           <Link to="/" className="flex-shrink-0" aria-label="Om Satyam home">
-            <Logo className="h-12 sm:h-14" />
+            <Logo />
           </Link>
 
           <nav className="hidden items-center gap-7 lg:flex">
@@ -83,11 +83,11 @@ const Navbar = () => {
             ))}
           </nav>
 
-          <div className="ml-auto hidden w-full max-w-[15rem] md:block">
+          <div className="ml-auto hidden w-full max-w-[15rem] xl:block">
             <SearchBar />
           </div>
 
-          <div className="ml-auto flex items-center gap-3 md:ml-0">
+          <div className="ml-auto flex items-center gap-3 xl:ml-0">
             <Link
               to="/cart"
               aria-label="Cart"
@@ -105,7 +105,7 @@ const Navbar = () => {
               href={whatsappLink("Hi, I'd like some advice on dental equipment and supplies.")}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden whitespace-nowrap rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-hover xl:block"
+              className="hidden whitespace-nowrap rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-hover sm:block lg:hidden xl:block"
             >
               WhatsApp us
             </a>
@@ -121,7 +121,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        <div className="px-5 pb-3 md:hidden">
+        <div className="mx-auto max-w-7xl px-5 pb-3 sm:px-8 xl:hidden">
           <SearchBar />
         </div>
 

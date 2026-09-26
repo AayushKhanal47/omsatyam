@@ -11,7 +11,7 @@ const ClinicCta = () => (
         <div className="pointer-events-none absolute -bottom-32 left-1/3 h-80 w-80 rounded-full bg-accent/25 blur-3xl" />
         <div className="relative grid items-center gap-10 lg:grid-cols-[1.4fr_1fr]">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">New clinic?</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">Clinic setup with Om Satyam</p>
             <h2 className="mt-3 font-display text-3xl font-bold leading-tight text-white sm:text-4xl">
               Setting up a clinic? Let's plan it together.
             </h2>

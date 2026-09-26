@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, MapPin, ShieldCheck, Truck, Zap } from "lucide-react";
 import type { Product } from "@/types";
 import { whatsappLink } from "@/lib/contact";
 
@@ -17,16 +17,17 @@ const Hero = ({ products }: HeroProps) => {
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 pb-16 pt-12 sm:px-8 lg:grid-cols-[1.05fr_1fr] lg:pb-24 lg:pt-20">
         <div className="animate-fade-in-up">
-          <p className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary-soft px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-            <Sparkles className="h-3.5 w-3.5" />
-            Dental &amp; surgical supply · Nepal
+          <p className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-white py-1 pl-1 pr-4 text-[11px] font-semibold uppercase tracking-[0.1em] text-primary shadow-sm sm:text-xs sm:tracking-[0.16em]">
+            <img src="/logo-mark.png" alt="" className="h-7 w-7 rounded-full bg-primary-soft p-1" />
+            Om Satyam Dental &amp; Surgical
           </p>
           <h1 className="mt-6 font-display text-4xl font-bold leading-[1.08] tracking-tight text-text sm:text-5xl lg:text-6xl">
             Everything your <span className="text-primary">clinic</span> needs, delivered across Nepal
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-text-secondary">
-            Dental chairs, imaging, handpieces, endodontics, instruments and everyday consumables — genuine products
-            from trusted manufacturers, with honest advice before and after you buy.
+            <strong className="font-semibold text-text">Om Satyam</strong> supplies dental chairs, imaging, handpieces,
+            endodontics, instruments and everyday consumables — genuine products from trusted manufacturers, with
+            honest advice before and after you buy.
           </p>
 
           <div className="mt-9 flex flex-wrap gap-3">
@@ -46,6 +47,19 @@ const Hero = ({ products }: HeroProps) => {
               Get a quote on WhatsApp
             </a>
           </div>
+
+          <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-3 text-sm text-text-secondary">
+            {[
+              { icon: MapPin, label: "Store in Bharatpur, Chitwan" },
+              { icon: Zap, label: "Same-day delivery in Chitwan" },
+              { icon: Truck, label: "Delivery across Nepal" },
+            ].map((item) => (
+              <li key={item.label} className="flex items-center gap-2">
+                <item.icon className="h-4 w-4 text-accent" />
+                {item.label}
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div className="relative animate-fade-in lg:pl-6">

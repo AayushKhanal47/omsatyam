@@ -17,7 +17,7 @@ const AdminLayout = () => {
 
   const brand = (
     <Link to="/admin/dashboard" className="flex items-center gap-3" onClick={() => setMobileNavOpen(false)}>
-      <img src="/logo.png" alt="" className="h-9 w-9 object-contain" />
+      <img src="/logo-mark.png" alt="" className="h-9 w-9 object-contain" />
       <span className="font-display text-lg font-semibold text-admin-navy">Om Satyam</span>
     </Link>
   );

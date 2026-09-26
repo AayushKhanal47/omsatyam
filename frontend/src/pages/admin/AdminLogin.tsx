@@ -30,7 +30,7 @@ const AdminLogin = () => {
     <div className="flex min-h-screen items-center justify-center bg-admin-bg px-6">
       <div className={`w-full max-w-sm animate-scale-in ${cardCls} p-8`}>
         <div className="mb-8 text-center">
-          <img src="/logo.png" alt="" className="mx-auto mb-3 h-14 w-14 object-contain" />
+          <img src="/logo-mark.png" alt="" className="mx-auto mb-3 h-14 w-14 object-contain" />
           <h1 className="font-display text-xl font-bold text-admin-navy">Om Satyam</h1>
           <p className="mt-1 text-sm text-admin-slate">Sign in to the admin dashboard</p>
         </div>

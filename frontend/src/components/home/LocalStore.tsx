@@ -12,7 +12,7 @@ const LocalStore = () => (
       <Reveal className="h-full">
         <div className="relative h-full overflow-hidden rounded-[2rem] bg-cream p-8 sm:p-10">
           <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full border-[28px] border-primary/10" />
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Based in Chitwan</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Om Satyam, Bharatpur</p>
           <h2 className="mt-3 max-w-md font-display text-3xl font-bold leading-tight text-text sm:text-4xl">
             Your neighbourhood dental supplier
           </h2>

@@ -40,9 +40,7 @@ const Footer = () => {
       <div className="mx-auto max-w-7xl px-5 pb-10 pt-16 sm:px-8">
         <div className="grid gap-12 lg:grid-cols-[1.4fr_2fr]">
           <div className="max-w-sm">
-            <div className="inline-flex rounded-2xl bg-white px-4 py-2">
-              <Logo className="h-12" />
-            </div>
+            <Logo tone="dark" size="lg" />
             <p className="mt-5 text-sm leading-relaxed text-white/65">
               Genuine dental and surgical equipment, instruments and consumables for clinics and practitioners
               across Nepal.
@@ -96,7 +94,14 @@ const Footer = () => {
           </a>
         </div>
 
-        <div className="mt-10 flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-white/45 sm:flex-row sm:items-center sm:justify-between">
+        <p
+          aria-hidden="true"
+          className="pointer-events-none mt-14 select-none whitespace-nowrap text-center font-display text-[15vw] font-bold leading-[0.8] tracking-tighter text-white/[0.05] lg:text-[11rem]"
+        >
+          Om Satyam
+        </p>
+
+        <div className="flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-white/45 sm:flex-row sm:items-center sm:justify-between">
           <span>© {new Date().getFullYear()} Om Satyam Dental &amp; Surgical. All rights reserved.</span>
           <span>Delivery across Nepal · Same-day in Chitwan</span>
         </div>
